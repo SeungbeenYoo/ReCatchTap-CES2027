@@ -6,6 +6,17 @@
 
 **Pay Smart, Pay Less.**
 
+<br>
+
+<a href="https://seungbeenyoo.github.io/ReCatch-CES2027/">
+  <img src="images/preview.jpg" alt="ReCatch Tap CES 2027 가상 부스 발표 미리보기" width="100%">
+</a>
+<p>▲ <b>이미지를 클릭하면 <u>[CES 2027 가상 부스 발표]</u>가 열립니다.</b></p>
+
+<p>
+  <a href="https://seungbeenyoo.github.io/Recatch-APP/"><b>📱 연결된 앱 프로토타입 바로가기 →</b></a>
+</p>
+
 </div>
 
 > **안내** — 이 저장소의 **ReCatch Tap(리캐치 탭)** 은 교육 프로그램 「생성형 AI 활용 해외마케팅 (CES 2027 연계)」에서 팀 과제로 기획한 **가상의 아이템**입니다.
@@ -72,6 +83,8 @@
 ├── scene3.html    # 4 폰을 대면 (앱 시연)
 ├── scene4.html    # 5 QR 청중 체험
 ├── scene5.html    # 6 마무리
+├── images/
+│   └── preview.jpg  # README 미리보기 이미지
 └── README.md
 ```
 
