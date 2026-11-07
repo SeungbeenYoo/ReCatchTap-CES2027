@@ -8,7 +8,7 @@
 
 <br>
 
-<a href="https://seungbeenyoo.github.io/ReCatch-CES2027/">
+<a href="https://seungbeenyoo.github.io/ReCatchTap-CES2027/">
   <img src="images/preview.jpg" alt="ReCatch Tap CES 2027 가상 부스 발표 미리보기" width="100%">
 </a>
 <p>▲ <b>이미지를 클릭하면 <u>[CES 2027 가상 부스 발표]</u>가 열립니다.</b></p>
