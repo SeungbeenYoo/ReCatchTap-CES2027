@@ -292,15 +292,27 @@ var RC = {
     g.fillStyle='#ffffff'; g.font='800 34px '+FONT; g.fillText('B2C 할인받을 때만 20%',rx,620); }),
   sign: tex(2400,200,function(g,w,h){ var sg=g.createLinearGradient(0,0,0,h); sg.addColorStop(0,'#2a2a30'); sg.addColorStop(1,'#141416'); g.fillStyle=sg; g.fillRect(0,0,w,h); g.fillStyle='rgba(255,255,255,0.5)'; g.fillRect(0,0,w,5); g.fillStyle='#f98802'; g.fillRect(0,h-16,w,16); g.textBaseline='middle'; g.textAlign='center';
     for (var i=0;i<2;i++){ var x=w*(i+.5)/2; g.fillStyle='#ffffff'; g.font='900 92px '+FONT; g.fillText('ReCatch',x-12,h/2-4); g.fillStyle='#f98802'; g.beginPath(); g.arc(x+180,h/2+22,12,0,7); g.fill(); } }),
-  pod: function(n){ return tex(400,160,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#e8e8ea'; g.font='700 52px '+FONT; g.textAlign='center'; g.textBaseline='middle'; g.fillText('Tap 체험 '+n,w/2,70); g.fillStyle='rgba(249,136,2,0.9)'; g.fillRect(w/2-46,118,92,7); }); },
+  pod: function(n){ return tex(400,160,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#e8e8ea'; g.font='700 52px '+FONT; g.textAlign='center'; g.textBaseline='middle'; g.fillText(['','앱 체험','QR 체험','NFC 체험'][n],w/2,70); g.fillStyle='rgba(249,136,2,0.9)'; g.fillRect(w/2-46,118,92,7); }); },
+  qrm: tex(260,360,function(g,w,h){ g.fillStyle='#1a1a1d'; if (g.roundRect){ g.beginPath(); g.roundRect(0,0,w,h,22); g.fill(); } g.fillStyle='#ffffff'; if (g.roundRect){ g.beginPath(); g.roundRect(12,12,w-24,h-24,16); g.fill(); }
+    g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#1d1d1f'; g.font='900 26px '+FONT; g.fillText('QR 체험',w/2,44); g.fillStyle='#f98802'; g.fillRect(w/2-24,64,48,5);
+    var q=168, ox=(w-q)/2, oy=88, n=21, c=q/n; g.fillStyle='#1d1d1f'; var sd=7; for (var y=0;y<n;y++) for (var x=0;x<n;x++){ sd=(sd*9301+49297)%233280; if (sd/233280<0.5) g.fillRect(ox+x*c,oy+y*c,c,c); }
+    [[0,0],[n-7,0],[0,n-7]].forEach(function(f){ g.fillStyle='#fff'; g.fillRect(ox+f[0]*c-c,oy+f[1]*c-c,c*9,c*9); g.fillStyle='#f98802'; g.fillRect(ox+f[0]*c,oy+f[1]*c,c*7,c*7); g.fillStyle='#fff'; g.fillRect(ox+(f[0]+1)*c,oy+(f[1]+1)*c,c*5,c*5); g.fillStyle='#1d1d1f'; g.fillRect(ox+(f[0]+2)*c,oy+(f[1]+2)*c,c*3,c*3); });
+    g.fillStyle='#1d1d1f'; g.font='800 20px '+FONT; g.fillText('카메라로 스캔',w/2,292); g.fillStyle='#8a8a92'; g.font='600 15px '+FONT; g.fillText('NFC 없는 매장 체험',w/2,320); }),
+  nfcm: tex(260,320,function(g,w,h){ g.fillStyle='#1a1a1d'; if (g.roundRect){ g.beginPath(); g.roundRect(0,0,w,h,26); g.fill(); } g.fillStyle='#0d0d0f'; if (g.roundRect){ g.beginPath(); g.roundRect(14,14,w-28,h-28,18); g.fill(); }
+    g.textAlign='center'; g.textBaseline='middle'; g.strokeStyle='#f98802'; g.lineCap='round'; var cx0=w/2-34, cy0=128;
+    for (var i=0;i<3;i++){ g.lineWidth=9; g.globalAlpha=1-i*0.22; g.beginPath(); g.arc(cx0,cy0,28+i*26,-0.75,0.75); g.stroke(); } g.globalAlpha=1; g.fillStyle='#f98802'; g.beginPath(); g.arc(cx0,cy0,10,0,7); g.fill();
+    g.fillStyle='#ffffff'; g.font='900 40px '+FONT; g.fillText('NFC',w/2,236); g.fillStyle='#b9b9c0'; g.font='700 18px '+FONT; g.fillText('여기에 폰을 대세요',w/2,276); }),
   phone: tex(200,400,function(g,w,h){ g.fillStyle='#111'; if (g.roundRect){ g.beginPath(); g.roundRect(0,0,w,h,30); g.fill(); } g.fillStyle='#fbfbfd'; if (g.roundRect){ g.beginPath(); g.roundRect(10,12,w-20,h-24,22); g.fill(); }
     g.drawImage(LOGO,26,40,40,40); g.fillStyle='#1d1d1f'; g.font='800 18px '+FONT; g.fillText('할인이 떴어요',26,118); g.fillStyle='#f98802'; g.font='900 30px '+FONT; g.fillText('-₩1,200',26,160);
     g.fillStyle='#e6e6ea'; g.fillRect(26,190,148,60); g.fillStyle='#1d1d1f'; for (var i=0;i<22;i++) g.fillRect(32+i*6.4,198,[2,3,4][i%3],44); g.fillStyle='#f98802'; if (g.roundRect){ g.beginPath(); g.roundRect(26,330,148,34,10); g.fill(); } })
 };
 // 원기둥 (원통 포디움)
-function cyl(cx,cz,r,y0,y1,col,n,emis){ n=n||18; for (var i=0;i<n;i++){ var a0=i/n*Math.PI*2, a1=(i+1)/n*Math.PI*2, am=(a0+a1)/2; var p0=[cx+Math.cos(a0)*r,cz+Math.sin(a0)*r], p1=[cx+Math.cos(a1)*r,cz+Math.sin(a1)*r];
+function cyl(cx,cz,r,y0,y1,col,n,emis,noCap){ n=Math.max(n||18,44); for (var i=0;i<n;i++){ var a0=i/n*Math.PI*2, a1=(i+1)/n*Math.PI*2, am=(a0+a1)/2; var p0=[cx+Math.cos(a0)*r,cz+Math.sin(a0)*r], p1=[cx+Math.cos(a1)*r,cz+Math.sin(a1)*r];
   quad([[p1[0],y1,p1[1]],[p0[0],y1,p0[1]],[p0[0],y0,p0[1]],[p1[0],y0,p1[1]]],[Math.cos(am),0,Math.sin(am)],{col:col,emis:emis});
-  quad([[cx,y1,cz],[cx,y1,cz],[p0[0],y1,p0[1]],[p1[0],y1,p1[1]]],[0,1,0],{col:col,emis:emis}); } }
+  }
+  if (noCap) return;
+  var cap=[]; for (var i=n;i>0;i--){ var a=i/n*Math.PI*2; cap.push([cx+Math.cos(a)*r,y1,cz+Math.sin(a)*r]); }
+  quad(cap,[0,1,0],{col:col,emis:emis}); faces[faces.length-1].ctr=xp([cx,y1,cz]); }
 // ── 부스 양옆 곡면 패널 (UVP · 기술요약 자료 반영)
 function rr2(g,x,y,w,h,r,fill,stroke,lw){ g.beginPath(); if (g.roundRect) g.roundRect(x,y,w,h,r); else g.rect(x,y,w,h); if (fill){ g.fillStyle=fill; g.fill(); } if (stroke){ g.strokeStyle=stroke; g.lineWidth=lw||3; g.stroke(); } }
 RC.wingL=tex(1500,1000,function(g,w,h){ g.fillStyle='#f6f5f3'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,0,w,14);
@@ -364,21 +376,23 @@ function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, off=((
   // 원통 체험 포디움 3대 + 폰
   var cz=6;
   [-4.4,0,4.4].forEach(function(x,i){ var z=cz+3.1;
-    cyl(cx+x,z,0.72,0.26,1.08,'#141416',18); cyl(cx+x,z,0.76,1.08,1.18,'#f98802',18,true);
+    cyl(cx+x,z,0.72,0.26,1.08,'#141416',18,false,true); cyl(cx+x,z,0.76,1.08,1.18,'#f98802',18,true);
     panel([cx+x,0.72,z+0.74],0.9,0.36,'z+',{tex:RC.pod(i+1),emis:true});
-    box(cx+x-0.24,1.18,z-0.1,cx+x+0.24,1.98,z-0.04,{col:'#111',ftex:RC.phone,femis:true});
+    if (i===0) box(cx+x-0.24,1.18,z-0.1,cx+x+0.24,1.98,z-0.04,{col:'#111',ftex:RC.phone,femis:true});
+    else if (i===1){ box(cx+x-0.05,1.18,z-0.16,cx+x+0.05,1.42,z-0.08,{col:'#202024'}); box(cx+x-0.3,1.42,z-0.12,cx+x+0.3,2.24,z-0.04,{col:'#111',ftex:RC.qrm,femis:true}); }
+    else { box(cx+x-0.36,1.18,z-0.3,cx+x+0.36,1.28,z+0.3,{col:'#1a1a1d',front:'#f98802'}); box(cx+x-0.3,1.28,z-0.1,cx+x+0.3,2.02,z-0.02,{col:'#111',ftex:RC.nfcm,femis:true}); }
     glow([cx+x,0.03,z+0.9],1.8,[255,180,90],0.35);
   });
   // 천장 회전 사인 (앞 보보다 아래)
-  ring(cx, 9.9, cz-0.4, 3.2, 1.15, RC.sign, 40);
+  ring(cx, 9.9, cz-0.4, 3.2, 1.15, RC.sign, 64);
   [[-4.4,3.1],[0,3.1],[4.4,3.1],[0,-1.4]].forEach(function(o){ CONES.push({a:[cx+o[0]*0.4,15.6,cz+o[1]+5], b:[cx+o[0],0.3,cz+o[1]+0.4], r:o[1]>0?1.9:3.4}); });
   glow([cx,0.03,cz+1],13,[255,150,40],0.30); glow([cx,0.03,cz+3.6],7,[255,225,185],0.2);
 })();
 function drawTower(){}
 // 점원 (남자 · 키 큼 · 포디움 뒤에서만 조금씩 이동)
-var STAFF={ x:0, z:7.2, tx:0, vx:0, wait:2, ph:0, spd:0, wave:0 };
-function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.abs(s.tx-s.x)<0.05){ s.tx=pickOf([-4.6,-2.3,0,2.3,4.6]); s.wait=rnd(2.5,5); }
-  var d=s.tx-s.x, want=s.wait>0?0:clamp(d*1.2,-0.9,0.9); s.vx+=(want-s.vx)*Math.min(1,dt*3); s.x+=s.vx*dt; s.spd=Math.abs(s.vx); s.ph+=dt*s.spd*5.4; s.wave=(s.wave+dt)%9; }
+var STAFF={ x:0, z:7.2, tx:2.6, vx:0, wait:0, ph:0, spd:0, wave:0 };
+function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.abs(s.tx-s.x)<0.08){ var o=[-5.2,-2.6,0,2.6,5.2].filter(function(v){ return Math.abs(v-s.x)>2; }); s.tx=pickOf(o); s.wait=rnd(0.25,0.6); }
+  var d=s.tx-s.x, want=s.wait>0?0:Math.sign(d)*Math.min(0.85,Math.abs(d)*2.2); s.vx+=(want-s.vx)*Math.min(1,dt*4); s.x+=s.vx*dt; s.spd=Math.abs(s.vx); s.ph+=dt*s.spd*5.4; s.wave=(s.wave+dt)%9; }
 
 
 // 리캐치로 이어지는 바닥 조명 (통로 양옆 LED 라인 + 매립등)
@@ -483,7 +497,7 @@ function drawFace(f, cs, z, refl){
   if (f.n[1]===0 && !f.emis && !refl){ var ys=cl.map(function(q){ return proj(q)[1]; }), y0=Math.min.apply(null,ys), y1=Math.max.apply(null,ys); if (y1-y0>3){ var gg=ctx.createLinearGradient(0,y0,0,y1); gg.addColorStop(0,rgba(c.map(function(v){return v*1.1;}),f.alpha)); gg.addColorStop(0.75,rgba(c,f.alpha)); gg.addColorStop(1,rgba(c.map(function(v){return v*0.62;}),f.alpha)); ctx.fillStyle=gg; } else ctx.fillStyle=rgba(c,f.alpha); }
   else ctx.fillStyle=rgba(c, f.alpha);
   ctx.fill();
-  if (!f.emis && !refl){ ctx.strokeStyle='rgba(0,0,0,0.05)'; ctx.lineWidth=1; ctx.stroke(); }
+  ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1; ctx.lineJoin='round'; ctx.stroke();
 }
 function rrp(x,y,w,h,r){ if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h); }
 function drawPerson(c, p, isMe, t){
@@ -534,7 +548,7 @@ function buildList(t){
   var list=[];
   faces.forEach(function(f){
     if (MIRROR && (f.noRefl || Math.min(f.p[0][1],f.p[1][1],f.p[2][1],f.p[3][1]) > 5)) return;
-    var ctr=mul(add(add(f.p[0],f.p[1]),add(f.p[2],f.p[3])),0.25);
+    var ctr=f.ctr||mul(add(add(f.p[0],f.p[1]),add(f.p[2],f.p[3])),0.25);
     var cp = MIRROR ? [cam.pos[0], -cam.pos[1], cam.pos[2]] : cam.pos;
     if (dot(f.n, sub(cp, ctr)) <= 0) return;
     var cs=f.p.map(toCam), z=toCam(ctr)[2]+f.bias; if (z<-3) return;
