@@ -44,7 +44,7 @@ html.embed .brand, html.embed .tag { display: none !important; }
 var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 var cv = document.getElementById('v'), ctx = cv.getContext('2d');
 var W, H, DPR;
-function resize(){ DPR = Math.min(1.25, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
+function resize(){ DPR = 1; W = innerWidth; H = innerHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
 addEventListener('resize', resize); resize();
 var FONT = "'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
 var LOGO=new Image(), started=false; function ready(){ if (!started){ started=true; start(); } } LOGO.onload=ready; LOGO.onerror=ready;
@@ -304,9 +304,8 @@ var RC = {
   pod: function(n){ return tex(400,160,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#e8e8ea'; g.font='700 52px '+FONT; g.textAlign='center'; g.textBaseline='middle'; g.fillText(['','앱 체험','QR 체험','NFC 체험'][n],w/2,70); g.fillStyle='rgba(249,136,2,0.9)'; g.fillRect(w/2-46,118,92,7); }); },
   qrm: tex(260,360,function(g,w,h){ g.fillStyle='#1a1a1d'; if (g.roundRect){ g.beginPath(); g.roundRect(0,0,w,h,22); g.fill(); } g.fillStyle='#ffffff'; if (g.roundRect){ g.beginPath(); g.roundRect(12,12,w-24,h-24,16); g.fill(); }
     g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#1d1d1f'; g.font='900 26px '+FONT; g.fillText('QR 체험',w/2,44); g.fillStyle='#f98802'; g.fillRect(w/2-24,64,48,5);
-    var q=168, ox=(w-q)/2, oy=88, n=21, c=q/n; g.fillStyle='#1d1d1f'; var sd=7; for (var y=0;y<n;y++) for (var x=0;x<n;x++){ sd=(sd*9301+49297)%233280; if (sd/233280<0.5) g.fillRect(ox+x*c,oy+y*c,c,c); }
-    [[0,0],[n-7,0],[0,n-7]].forEach(function(f){ g.fillStyle='#fff'; g.fillRect(ox+f[0]*c-c,oy+f[1]*c-c,c*9,c*9); g.fillStyle='#f98802'; g.fillRect(ox+f[0]*c,oy+f[1]*c,c*7,c*7); g.fillStyle='#fff'; g.fillRect(ox+(f[0]+1)*c,oy+(f[1]+1)*c,c*5,c*5); g.fillStyle='#1d1d1f'; g.fillRect(ox+(f[0]+2)*c,oy+(f[1]+2)*c,c*3,c*3); });
-    g.fillStyle='#1d1d1f'; g.font='800 20px '+FONT; g.fillText('카메라로 스캔',w/2,292); g.fillStyle='#8a8a92'; g.font='600 15px '+FONT; g.fillText('NFC 없는 매장 체험',w/2,320); }),
+    var QB='111111100100000010111101001111111100000100010100110100100001000001101110101001101100011111001011101101110101100100000110100101011101101110101011011110001110001011101100000101000011001010001101000001111111101010101010101010101111111000000001110001010011101000000000101111100011110001010011101111100001010000000110011110001001101101101101110010011101001010111010110100010011110010011111001010011110101111111100001010011111110111010011011011010110101100100100100111001000101001011110101110011101010110001011101101100000111011111100100100111011110101000011110110001101011001101100000011101011101101110100101011101100101100000110110000011000100010000011110010111101111011111101111100110100110111000101100001011010110001111110000101101001101101110000010110100011110100110011101110010111110111101111110000101001101001010010111111001000000001101010011111001100010110111111100110000111001011101010110100000101110000111100001100011111101110101111001110011110111111011101110101110010101100001110011101101110101101100110101011101100100100000100110110100100101100011100111111101011110111001011100100010', n=33, q=176, ox=(w-q)/2, oy=86, c=q/n; g.fillStyle='#1d1d1f'; for (var y=0;y<n;y++) for (var x=0;x<n;x++) if (QB.charAt(y*n+x)==='1') g.fillRect(ox+x*c-0.2,oy+y*c-0.2,c+0.4,c+0.4);
+    g.fillStyle='#1d1d1f'; g.font='800 20px '+FONT; g.fillText('카메라로 스캔',w/2,296); g.fillStyle='#8a8a92'; g.font='600 15px '+FONT; g.fillText('NFC 없는 매장 체험',w/2,320); }),
   nfcm: tex(260,320,function(g,w,h){ g.fillStyle='#1a1a1d'; if (g.roundRect){ g.beginPath(); g.roundRect(0,0,w,h,26); g.fill(); } g.fillStyle='#0d0d0f'; if (g.roundRect){ g.beginPath(); g.roundRect(14,14,w-28,h-28,18); g.fill(); }
     g.textAlign='center'; g.textBaseline='middle'; g.strokeStyle='#f98802'; g.lineCap='round'; var cx0=w/2-34, cy0=128;
     for (var i=0;i<3;i++){ g.lineWidth=9; g.globalAlpha=1-i*0.22; g.beginPath(); g.arc(cx0,cy0,28+i*26,-0.75,0.75); g.stroke(); } g.globalAlpha=1; g.fillStyle='#f98802'; g.beginPath(); g.arc(cx0,cy0,10,0,7); g.fill();
@@ -316,7 +315,7 @@ var RC = {
     g.fillStyle='#e6e6ea'; g.fillRect(26,190,148,60); g.fillStyle='#1d1d1f'; for (var i=0;i<22;i++) g.fillRect(32+i*6.4,198,[2,3,4][i%3],44); g.fillStyle='#f98802'; if (g.roundRect){ g.beginPath(); g.roundRect(26,330,148,34,10); g.fill(); } })
 };
 // 원기둥 (원통 포디움)
-function cyl(cx,cz,r,y0,y1,col,n,emis,noCap){ n=Math.max(n||18,44); for (var i=0;i<n;i++){ var a0=i/n*Math.PI*2, a1=(i+1)/n*Math.PI*2, am=(a0+a1)/2; var p0=[cx+Math.cos(a0)*r,cz+Math.sin(a0)*r], p1=[cx+Math.cos(a1)*r,cz+Math.sin(a1)*r];
+function cyl(cx,cz,r,y0,y1,col,n,emis,noCap){ n=Math.max(n||18,32); for (var i=0;i<n;i++){ var a0=i/n*Math.PI*2, a1=(i+1)/n*Math.PI*2, am=(a0+a1)/2; var p0=[cx+Math.cos(a0)*r,cz+Math.sin(a0)*r], p1=[cx+Math.cos(a1)*r,cz+Math.sin(a1)*r];
   quad([[p1[0],y1,p1[1]],[p0[0],y1,p0[1]],[p0[0],y0,p0[1]],[p1[0],y0,p1[1]]],[Math.cos(am),0,Math.sin(am)],{col:col,emis:emis});
   }
   if (noCap) return;
@@ -345,10 +344,13 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
   g.fillStyle='#f98802'; g.font='800 34px '+FONT; g.fillText('04 독점 우위',80,505);
   [['1','원탭 결제 흐름','태그부터 바코드까지 한 번에','특허 출원 추진'],['2','자체 혜택 DB','공식 공시를 매일 갱신','데이터 장벽'],['3','결제 순간 데이터','오프라인 혜택 반응 데이터','네트워크 효과']].forEach(function(c,i){ var x=80+i*452; rr2(g,x,535,430,250,22,'#ffffff'); g.fillStyle='#f98802'; g.font='900 60px '+FONT; g.fillText(c[0],x+30,610); g.fillStyle='#1d1d1f'; g.font='900 40px '+FONT; g.fillText(c[1],x+30,670); g.fillStyle='#6e6e73'; g.font='600 26px '+FONT; g.fillText(c[2],x+30,712); rr2(g,x+30,730,g.measureText(c[3]).width+60,40,20,'#1d1d1f'); g.fillStyle='#ffffff'; g.font='700 24px '+FONT; g.fillText(c[3],x+52,758); });
   rr2(g,80,820,1340,130,24,null,'#f98802',4); g.fillStyle='#f98802'; g.font='900 46px '+FONT; g.fillText('Absolute Blue Ocean',120,900); g.fillStyle='#e8e8ea'; g.font='600 30px '+FONT; g.fillText('결제 직전 개인화 + 자동 실행 · NFC 인식 · 최적 계산 · 바코드',620,895); });
+// 양옆 벽: 팀 자료 이미지 (왼쪽 = 프로덕트 소개, 오른쪽 = 시장·차별점·기술)
+(function(){ function wall(c,src){ var im=new Image(); im.onload=function(){ c.width=2400; c.height=1380; var g=c.getContext('2d'), w=c.width, h=c.height; g.fillStyle='#fffaf4'; g.fillRect(0,0,w,h); var s=Math.min(w/im.width,h/im.height), dw=im.width*s, dh=im.height*s; g.drawImage(im,(w-dw)/2,(h-dh)/2,dw,dh); g.filter='none'; c._mip=null; c._avg=null; }; im.src=src; }
+  wall(RC.wingL,'images/wall_left.jpg'); wall(RC.wingR,'images/wall_right.jpg'); })();
 RC.band=tex(3600,260,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-10,w,10); g.textBaseline='middle'; g.textAlign='center';
   for (var i=0;i<2;i++){ var x=w*(i+.5)/2; g.font='900 96px '+FONT; g.fillStyle='#ffffff'; g.fillText('ReCatch Tap',x-260,h/2); g.fillStyle='#f98802'; g.beginPath(); g.arc(x+70,h/2+28,12,0,7); g.fill(); g.fillStyle='#b9b9c0'; g.font='700 56px '+FONT; g.fillText('Pay Smart, Pay Less.',x+390,h/2+6); } });
 // 맨 위 띠: 전광판처럼 옆으로 흐름
-var BANDSRC=document.createElement('canvas'); BANDSRC.width=RC.band.width; BANDSRC.height=RC.band.height; BANDSRC.getContext('2d').drawImage(RC.band,0,0);
+RC.band._dyn=true; var BANDSRC=document.createElement('canvas'); BANDSRC.width=RC.band.width; BANDSRC.height=RC.band.height; BANDSRC.getContext('2d').drawImage(RC.band,0,0);
 function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, off=((reduce?0:tt)*260)%w; g.drawImage(BANDSRC,-off,0); g.drawImage(BANDSRC,w-off,0); }
 (function(){ var cx=0, BZ=0.4, H=6.6, HT=8.8, XB=8.6, XF=12.6, ZF=13.4;
   // 사각 플랫폼 (앞쪽 넓은 사다리꼴) + 주황 라인
@@ -427,7 +429,7 @@ function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.a
 var N_PEOPLE=0;
 var PATH=[[2.1,45.6],[0,39],[0,33],[0,17.2]];
 // 카메라 경로: [초, x, y, z, 좌우(yaw), 위아래(pitch), fov]  — 0초 = 장면 1 시점, 1.4초에 1인칭으로 전환
-var KEYS=[[0,0,1.85,26.0,0,0.1,56],[1.8,-1.6,3.5,14.6,-0.839,-0.01,36],[300,-1.6,3.5,14.6,-0.839,-0.01,36]];
+var KEYS=[[0,0,1.85,26.0,0,0.1,56],[2.0,-5.07,3.4,8.32,-1.273,0,50],[300,-5.07,3.4,8.32,-1.273,0,50]];
 var TOTAL=300.0;
 var me = { x:2.1, z:45.6, y:2.35, seg:0, walking:false, ph:0, t0:null, done:0, yaw:0.05, pitch:0.1, fov:60, cx:-1.4, cz:53.2, since:0 };
 var cpos=null, ctgt=null;
@@ -473,13 +475,17 @@ window.__seek=function(t){ me.t0=performance.now()-t*1000; };
 var L = norm([0.3, 1, 0.6]);
 function clipNear(cs){ var out=[]; for (var i=0;i<cs.length;i++){ var a=cs[i], b=cs[(i+1)%cs.length], ai=a[2]>NEAR, bi=b[2]>NEAR; if (ai) out.push(a); if (ai!==bi){ var t=(NEAR-a[2])/(b[2]-a[2]); out.push([lerp(a[0],b[0],t),lerp(a[1],b[1],t),NEAR]); } } return out; }
 function path(cs){ ctx.beginPath(); cs.forEach(function(c,i){ var p=proj(c); if (i) ctx.lineTo(p[0],p[1]); else ctx.moveTo(p[0],p[1]); }); ctx.closePath(); }
+function texMip(img,k){ if (k>=1 || img._dyn) return img; img._mip=img._mip||{}; var m=img._mip[k]; if (m) return m; m=document.createElement('canvas'); m.width=Math.max(1,Math.round(img.width*k)); m.height=Math.max(1,Math.round(img.height*k)); var g=m.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(img,0,0,m.width,m.height); img._mip[k]=m; return m; }
+function texAvg(img){ if (img._avg && !img._dyn) return img._avg; var m=texMip(img,0.125), c=document.createElement('canvas'); c.width=c.height=1; var g=c.getContext('2d'); g.drawImage(m,0,0,1,1); try { var d=g.getImageData(0,0,1,1).data; img._avg=[d[0],d[1],d[2]]; } catch(e){ img._avg=[120,120,124]; } return img._avg; }
 function texTri(img,s0,s1,s2,t0,t1,t2){
   ctx.save(); var cx=(s0[0]+s1[0]+s2[0])/3, cy=(s0[1]+s1[1]+s2[1])/3, ex=function(p){ var dx=p[0]-cx, dy=p[1]-cy, l=Math.hypot(dx,dy)||1; return [p[0]+dx/l*.8, p[1]+dy/l*.8]; };
   var a=ex(s0), b=ex(s1), c=ex(s2); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.lineTo(c[0],c[1]); ctx.closePath(); ctx.clip();
   var d=(t1[0]-t0[0])*(t2[1]-t0[1])-(t2[0]-t0[0])*(t1[1]-t0[1]); if (!d){ ctx.restore(); return; }
   var m11=((s1[0]-s0[0])*(t2[1]-t0[1])-(s2[0]-s0[0])*(t1[1]-t0[1]))/d, m12=((s1[1]-s0[1])*(t2[1]-t0[1])-(s2[1]-s0[1])*(t1[1]-t0[1]))/d,
       m21=((s2[0]-s0[0])*(t1[0]-t0[0])-(s1[0]-s0[0])*(t2[0]-t0[0]))/d, m22=((s2[1]-s0[1])*(t1[0]-t0[0])-(s1[1]-s0[1])*(t2[0]-t0[0]))/d;
-  ctx.transform(m11,m12,m21,m22,s0[0]-m11*t0[0]-m21*t0[1],s0[1]-m12*t0[0]-m22*t0[1]); ctx.drawImage(img,0,0); ctx.restore();
+  ctx.transform(m11,m12,m21,m22,s0[0]-m11*t0[0]-m21*t0[1],s0[1]-m12*t0[0]-m22*t0[1]);
+  var x0=Math.max(0,Math.floor(Math.min(t0[0],t1[0],t2[0]))-2), y0=Math.max(0,Math.floor(Math.min(t0[1],t1[1],t2[1]))-2), x1=Math.min(img.width,Math.ceil(Math.max(t0[0],t1[0],t2[0]))+2), y1=Math.min(img.height,Math.ceil(Math.max(t0[1],t1[1],t2[1]))+2);
+  if (x1>x0 && y1>y0) ctx.drawImage(img,x0,y0,x1-x0,y1-y0,x0,y0,x1-x0,y1-y0); ctx.restore();
 }
 function fogA(z){ return clamp((z-30)/90, 0, 0.75); }
 var FOG=[4,5,9];
@@ -487,7 +493,11 @@ function drawFace(f, cs, z, refl){
   var k = f.emis ? 1 : 0.5 + 0.5*Math.max(0, dot(f.n, L)); if (f.dim) k*=0.5;
   var fa = fogA(z);
   if (f.tex && !refl && cs.every(function(c){return c[2]>NEAR;})){
-    var n=f.sub, img=f.tex, iw=img.width, ih=img.height, u0g=f.uv[0], u1g=f.uv[1];
+    var sp=cs.map(proj), sx0=Math.min.apply(null,sp.map(function(q){return q[0];})), sx1=Math.max.apply(null,sp.map(function(q){return q[0];})), sy0=Math.min.apply(null,sp.map(function(q){return q[1];})), sy1=Math.max.apply(null,sp.map(function(q){return q[1];})), S=Math.max(sx1-sx0, sy1-sy0);
+    if (S<3) return;
+    if (S<22 && !f.glow){ var av=texAvg(f.tex); path(cs); ctx.fillStyle=rgba([lerp(av[0]*k,FOG[0],fa),lerp(av[1]*k,FOG[1],fa),lerp(av[2]*k,FOG[2],fa)],1); ctx.fill(); return; }
+    var n=S>760 ? f.sub : (S>280 ? Math.min(f.sub,2) : 1), u0g=f.uv[0], u1g=f.uv[1], src=f.tex, need=S*1.4/Math.max(0.05,Math.abs(u1g-u0g)), mk=1; while (mk>0.125 && src.width*mk/2>=need) mk/=2;
+    var img=texMip(src,mk), iw=img.width, ih=img.height;
     if (f.glow){ ctx.save(); ctx.globalCompositeOperation='lighter'; if (f.dim) ctx.globalAlpha=0.5; }
     for (var i=0;i<n;i++) for (var j=0;j<n;j++){
       var u0=i/n,u1=(i+1)/n,v0=j/n,v1=(j+1)/n;
@@ -510,13 +520,19 @@ function drawFace(f, cs, z, refl){
   ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1; ctx.lineJoin='round'; ctx.stroke();
 }
 function rrp(x,y,w,h,r){ if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h); }
+var OUT_TOP=[['#151517',1],['#1f2a44',0],['#f2f1ec',0],['#6b6e75',0],['#6e2430',1],['#4a5a3c',0],['#c9b99a',1],['#3b5f8a',0],['#2a2d33',1],['#8a8f98',0],['#5a3d2b',1],['#d7d9de',0]];
+var OUT_BOT=['#77704a','#2f4a6d','#1b1c20','#4b4e55','#c2b08e','#3a3d45','#25344f','#5c5446'];
+var OUT_SKIN=['#f0c8a8','#e2b08c','#d8a47f','#c48a63','#a86f4b','#8a5a3c'];
+var OUT_HAIR=['#141414','#1f1813','#3a2a1e','#5c4330','#8a6a45','#b8b2a8'];
+function outfit(o){ if (!o.oc){ var r=function(a){ return a[Math.floor(Math.random()*a.length)]; }, tp=r(OUT_TOP); o.oc={ top:tp[0], knit:!!tp[1], bot:r(OUT_BOT), skin:r(OUT_SKIN), hair:Math.random()<0.12?r(OUT_HAIR.slice(4)):r(OUT_HAIR.slice(0,4)) }; } return o.oc; }
 function drawPerson(c, p, isMe, t){
-  var _pa = (isMe==='staff') ? 1 : clamp(1-(me.since-0.4)/0.8, 0, 1); if (_pa<=0.01) return; ctx.save(); ctx.globalAlpha*=_pa; try { return _drawPerson(c,p,isMe,t); } finally { ctx.restore(); }
+  var _pa = clamp(1-(me.since-0.4)/0.8, 0, 1); if (_pa<=0.01) return; ctx.save(); ctx.globalAlpha*=_pa; try { return _drawPerson(c,p,isMe,t); } finally { ctx.restore(); }
 }
 function _drawPerson(c, p, isMe, t){
   var gv=p.gv!=null?p.gv:(p.gv=Math.random()*0.16-0.08); var G=function(b){ var v=Math.round(clamp(b*(1+gv),0,255)); return '#'+[v,v,v].map(function(x){return ('0'+x.toString(16)).slice(-2);}).join(''); };
-  if (isMe==='staff'){ p={ sc:1.12, staff:true, spd:STAFF.spd, ph:STAFF.ph, sway:0, skin:'#d8a47f', hair:'#141414', top:'#161618', bot:'#3a3d45' }; isMe=false; }
-  else p={ sc:p.sc, fan:p.fan, face:p.face, spd:p.spd, ph:p.ph, sway:p.sway, skin:G(160), hair:G(160), top:G(140), bot:G(112), mq:true };
+  if (isMe==='staff'){ p={ sc:1.12, staff:true, spd:STAFF.spd, ph:STAFF.ph, sway:0, skin:'#d8a47f', hair:'#141414', top:'#151517', bot:'#77704a', knit:true, lan:true }; isMe=false; }
+  else if (isMe===true) p={ sc:1.12, spd:0, ph:0, sway:0, skin:'#d8a47f', hair:'#141414', top:'#151517', bot:'#77704a', knit:true, lan:true };
+  else { var oc=outfit(p); p={ sc:p.sc, fan:p.fan, face:p.face, spd:p.spd, ph:p.ph, sway:p.sway, skin:oc.skin, hair:oc.hair, top:oc.top, bot:oc.bot, knit:oc.knit }; }
   var s=focal/c[2], foot=proj(c), h=1.72*p.sc*s, w=h*0.27, fa=fogA(c[2]);
   var fc=function(hx,k){ var q=hex(hx); k=k||1; return rgba([lerp(q[0]*k,FOG[0],fa),lerp(q[1]*k,FOG[1],fa),lerp(q[2]*k,FOG[2],fa)],1); };
   var moving = isMe ? me.walking : p.spd>0.18, ph = isMe ? (me.ph||0) : p.ph, sw = moving ? Math.sin(ph) : 0;
@@ -535,8 +551,10 @@ function _drawPerson(c, p, isMe, t){
   arm(-w*0.52, -sw*0.26+0.06); arm(w*0.52, (wv||sw*0.26)-0.06);
   var g=ctx.createLinearGradient(-w*0.6,0,w*0.6,0); g.addColorStop(0,fc(p.top,0.78)); g.addColorStop(0.45,fc(p.top,1.04)); g.addColorStop(1,fc(p.top,0.76)); ctx.fillStyle=g;
   ctx.beginPath(); ctx.moveTo(-w*0.58,tTop+w*0.18); ctx.quadraticCurveTo(-w*0.58,tTop,-w*0.28,tTop); ctx.lineTo(w*0.28,tTop); ctx.quadraticCurveTo(w*0.58,tTop,w*0.58,tTop+w*0.18); ctx.lineTo(w*0.47,tTop+tH); ctx.lineTo(-w*0.47,tTop+tH); ctx.closePath(); ctx.fill();
+  if (p.knit){ ctx.save(); ctx.globalAlpha=0.16; ctx.strokeStyle='#000'; ctx.lineWidth=Math.max(1,w*0.025); for (var kx=-0.4;kx<=0.41;kx+=0.1){ ctx.beginPath(); ctx.moveTo(w*kx,tTop+w*0.1); ctx.lineTo(w*kx*0.85,tTop+tH); ctx.stroke(); } ctx.globalAlpha=0.3; ctx.fillStyle='#000'; ctx.fillRect(-w*0.47,tTop+tH-h*0.045,w*0.94,h*0.03); ctx.restore(); }
   ctx.fillStyle=fc(p.bot,0.7); ctx.fillRect(-w*0.47, tTop+tH-h*0.02, w*0.94, h*0.035);
-  if (p.staff){ ctx.fillStyle='#f98802'; ctx.beginPath(); ctx.moveTo(-w*0.2,tTop); ctx.lineTo(0,tTop+h*0.07); ctx.lineTo(w*0.2,tTop); ctx.closePath(); ctx.fill(); ctx.fillRect(w*0.12,tTop+h*0.1,w*0.16,w*0.16); ctx.fillStyle='rgba(249,136,2,0.9)'; ctx.fillRect(-w*0.03,tTop+h*0.07,w*0.06,h*0.16); }
+  if (p.lan && back){ ctx.fillStyle='#f98802'; ctx.beginPath(); ctx.moveTo(-w*0.24,tTop+h*0.004); ctx.quadraticCurveTo(0,tTop-h*0.03,w*0.24,tTop+h*0.004); ctx.lineTo(w*0.2,tTop+h*0.022); ctx.quadraticCurveTo(0,tTop-h*0.008,-w*0.2,tTop+h*0.022); ctx.closePath(); ctx.fill(); }
+  if (p.staff || (p.lan && !back)){ ctx.fillStyle='#f98802'; ctx.beginPath(); ctx.moveTo(-w*0.2,tTop); ctx.lineTo(0,tTop+h*0.07); ctx.lineTo(w*0.2,tTop); ctx.closePath(); ctx.fill(); ctx.fillRect(w*0.12,tTop+h*0.1,w*0.16,w*0.16); ctx.fillStyle='rgba(249,136,2,0.9)'; ctx.fillRect(-w*0.03,tTop+h*0.07,w*0.06,h*0.16); }
   ctx.fillStyle=fc(p.skin,0.82); ctx.fillRect(-w*0.1, tTop-h*0.04, w*0.2, h*0.05);
   var hr=h*0.066, hy=tTop-h*0.04-hr*0.88;
   ctx.fillStyle=fc(p.skin); ctx.beginPath(); ctx.ellipse(0,hy,hr*0.84,hr,0,0,7); ctx.fill();
@@ -598,8 +616,8 @@ function spinRings(tt){ RINGS.forEach(function(R0){ var rot=reduce?0:tt*0.35; R0
   f.p=[p1,p0,[p0[0],y1,p0[2]],[p1[0],y1,p1[2]]]; f.n=[Math.cos(am),0,Math.sin(am)]; }); }); }
 var BL=document.createElement('canvas'), bctx=BL.getContext('2d');
 function bloom(){ if (reduce) return; var bw=Math.max(64,Math.round(W/6)), bh=Math.max(36,Math.round(H/6)); if (BL.width!==bw||BL.height!==bh){ BL.width=bw; BL.height=bh; }
-  bctx.globalCompositeOperation='copy'; bctx.filter='brightness(0.62) contrast(2.6) saturate(1.25) blur(3px)'; bctx.drawImage(cv,0,0,bw,bh); bctx.filter='none';
-  ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.5; ctx.imageSmoothingEnabled=true; ctx.drawImage(BL,0,0,cv.width,cv.height); ctx.restore(); }
+  var T=bloom.T||(bloom.T=document.createElement('canvas')); if (T.width!==bw||T.height!==bh){ T.width=bw; T.height=bh; } var tc=T.getContext('2d'); tc.globalCompositeOperation='copy'; tc.imageSmoothingEnabled=true; tc.drawImage(cv,0,0,bw,bh); bctx.globalCompositeOperation='copy'; bctx.filter='brightness(0.62) contrast(2.6) saturate(1.25) blur(3px)'; bctx.drawImage(T,0,0); bctx.filter='none';
+  ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.16*clamp(1-(me.since-0.6)/1.2,0,1); ctx.imageSmoothingEnabled=true; if (ctx.globalAlpha>0.005) ctx.drawImage(BL,0,0,cv.width,cv.height); ctx.restore(); }
 function frame(t){
   var tt=t/1000; spinRings(tt); scrollBand(tt); drawTower(tt, Math.min(0.1, tt-(frame.lt||tt))); frame.lt=tt;
   // 카메라: 천천히 다가가며 살짝 흔들림
@@ -626,7 +644,10 @@ function frame(t){
   var floor=[[-70,0,-80],[70,0,-80],[70,0,70],[-70,0,70]];
   var fl=clipNear(floor.map(toCam)); if (fl.length>2){ path(fl); var fg=ctx.createLinearGradient(0,H*0.42,0,H); fg.addColorStop(0,'#0b0c11'); fg.addColorStop(1,'#1a1c24'); ctx.fillStyle=fg; ctx.fill(); }
   // 반사 (바닥 아래로 뒤집어 흐리게)
-  MIRROR=true; ctx.save(); if (fl.length>2){ path(fl); ctx.clip(); } ctx.globalAlpha=0.32; drawList(buildList(tt),tt); ctx.restore(); MIRROR=false;
+  MIRROR=true; var MC=window.__MC||(window.__MC=document.createElement('canvas')), mw=Math.ceil(cv.width/2), mh=Math.ceil(cv.height/2); if (MC.width!==mw||MC.height!==mh){ MC.width=mw; MC.height=mh; }
+  var mc=MC.getContext('2d'); mc.setTransform(1,0,0,1,0,0); mc.globalAlpha=1; mc.globalCompositeOperation='source-over'; mc.clearRect(0,0,mw,mh); mc.setTransform(DPR*0.5,0,0,DPR*0.5,0,0);
+  var _ctx=ctx; ctx=mc; try { drawList(buildList(tt),tt); } finally { ctx=_ctx; }
+  ctx.save(); if (fl.length>2){ path(fl); ctx.clip(); } ctx.globalAlpha=0.32; ctx.imageSmoothingEnabled=true; ctx.drawImage(MC,0,0,W,H); ctx.restore(); MIRROR=false;
   // 반사 위 덮개 + 통로 카펫
   if (fl.length>2){ path(fl); var ov=ctx.createLinearGradient(0,H*0.42,0,H); ov.addColorStop(0,'rgba(8,9,13,0.55)'); ov.addColorStop(1,'rgba(14,15,20,0.35)'); ctx.fillStyle=ov; ctx.fill(); }
   var aisle=clipNear([[-3.4,0.01,36],[3.4,0.01,36],[3.4,0.01,13.2],[-3.4,0.01,13.2]].map(toCam)); if (aisle.length>2){ path(aisle); ctx.fillStyle='rgba(249,136,2,0.06)'; ctx.fill(); }
