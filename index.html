@@ -9,7 +9,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; background: #030305; color: #f5f5f7; overflow: hidden; font-family: 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif; word-break: keep-all; }
 body.hide-cursor { cursor: none; }
-body.touch.hide-cursor { cursor: pointer; }
 iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .28s ease; background: #030305; pointer-events: none; }
 iframe.on { opacity: 1; z-index: 2; }
 iframe.pre { z-index: 1; visibility: hidden; }
@@ -62,17 +61,6 @@ iframe.pre { z-index: 1; visibility: hidden; }
 .logo3d .wm b { color: var(--accent); }
 @keyframes float { 50% { transform: translateY(-1.6vh); } }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-.nav { position: fixed; bottom: 16px; z-index: 16; width: 56px; height: 56px; border-radius: 50%; border: 2px solid rgba(249,136,2,.85); background: rgba(10,10,14,.6); color: #fff; font-size: 22px; font-weight: 900; display: none; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-.nav.prev { left: 16px; } .nav.next { right: 16px; }
-body.touch.playing .nav { display: flex; }
-body.touch.playing .again.on { bottom: 84px; }
-.rotate { position: fixed; inset: 0; z-index: 30; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #050507; text-align: center; padding: 24px; }
-.rotate b { font-size: 20px; } .rotate span { color: #b9bfcc; font-size: 14px; }
-.rotate i { font-style: normal; font-size: 46px; display: inline-block; animation: rot 1.8s ease-in-out infinite; }
-@keyframes rot { 50% { transform: rotate(90deg); } }
-@media (orientation: portrait) and (max-width: 900px) { body.playing .rotate { display: flex; } }
-html, body { touch-action: manipulation; }
 @media (prefers-reduced-motion: reduce) { .start::before, .go, .logo3d img, .logo3d .ring { animation: none; } }
 @media (max-width: 760px) { .start { grid-template-columns: 1fr; padding: 6vh 6vw; } .st-r { display: none; } .st-l h1 { font-size: 7vh; } }
 </style>
@@ -82,9 +70,6 @@ html, body { touch-action: manipulation; }
 <div class="hud tag off" id="tag"></div>
 <div class="hud dots off" id="dots"></div>
 <button type="button" class="again" id="again" aria-label="첫 화면부터 다시 시작"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>다시 시작</button>
-<button type="button" class="nav prev" id="navPrev" aria-label="이전 장면">‹</button>
-<button type="button" class="nav next" id="navNext" aria-label="다음 장면">›</button>
-<div class="rotate" role="status"><i>📱</i><b>휴대폰을 가로로 돌려 주세요</b><span>Rotate your phone to landscape</span></div>
 <section class="start" id="start" aria-label="발표 시작 화면">
   <div class="st-l">
     <span class="prog">생성형 AI 활용 해외마케팅 <i>(CES 2027 연계)</i></span>
@@ -101,12 +86,13 @@ html, body { touch-action: manipulation; }
 <script>
 (function(){
   var SCENES=[
-    {src:'scene1.html',  tag:'SCENE <b>01</b> · ENTRANCE · 입장'},
-    {src:'scene2.html',  tag:'SCENE <b>02</b> · WALK IN · 1인칭'},
-    {src:'scene2b.html', tag:'SCENE <b>03</b> · DETAIL · 부스 둘러보기'},
-    {src:'scene3.html',  tag:'SCENE <b>04</b> · TAP · 폰을 대면'},
-    {src:'scene4.html',  tag:'SCENE <b>05</b> · LIVE DEMO · 직접 체험'},
-    {src:'scene5.html',  tag:'SCENE <b>06</b> · FINALE · 마무리'}
+    {src:'scene1.html',   tag:'SCENE <b>01</b> · ENTRANCE · 입장'},
+    {src:'scene2.html',   tag:'SCENE <b>02</b> · WALK IN · 1인칭'},
+    {src:'sceneL.html',   tag:'SCENE <b>03</b> · LEFT · 차별화'},
+    {src:'sceneR.html',   tag:'SCENE <b>04</b> · RIGHT · 기술'},
+    {src:'sceneQR.html',  tag:'SCENE <b>05</b> · NFC 없는 매장 · QR 체험'},
+    {src:'sceneNFC.html', tag:'SCENE <b>06</b> · NFC 매장 · 태그 결제'},
+    {src:'scene5.html',   tag:'SCENE <b>07</b> · FINALE · 마무리'}
   ];
   var N=SCENES.length, cur=-1, live=null, pre={}, started=false;
   var tag=document.getElementById('tag'), dotsEl=document.getElementById('dots'), again=document.getElementById('again'), readyEl=document.getElementById('ready');
@@ -139,12 +125,12 @@ html, body { touch-action: manipulation; }
     go();
   }
   function replay(){ if (!live) return; try { live.contentWindow.__start(); } catch(e){} }
-  function fs(){ var el=document.documentElement; if (!document.fullscreenElement){ try { if (el.requestFullscreen) el.requestFullscreen().catch(function(){}); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); } catch(e){} } else if (document.exitFullscreen) document.exitFullscreen(); }
+  function fs(){ var el=document.documentElement; if (!document.fullscreenElement){ if (el.requestFullscreen) el.requestFullscreen().catch(function(){}); } else if (document.exitFullscreen) document.exitFullscreen(); }
   function hud(on){ ['hb','tag','dots'].forEach(function(id){ document.getElementById(id).classList.toggle('off', !on); }); }
-  function begin(){ if (started) return; started=true; document.getElementById('start').classList.add('gone'); document.body.classList.add('hide-cursor'); document.body.classList.add('playing'); hud(true); fs(); show(0); }
+  function begin(){ if (started) return; started=true; document.getElementById('start').classList.add('gone'); document.body.classList.add('hide-cursor'); hud(true); fs(); show(0); }
   function restartAll(){ started=false; cur=-1; if (live && live.parentNode) live.parentNode.removeChild(live); live=null;
     again.classList.remove('on'); tag.innerHTML=''; hud(false);
-    document.getElementById('start').classList.remove('gone'); document.body.classList.remove('hide-cursor'); document.body.classList.remove('playing'); preload(0); preload(1); document.getElementById('go').focus(); }
+    document.getElementById('start').classList.remove('gone'); document.body.classList.remove('hide-cursor'); preload(0); preload(1); document.getElementById('go').focus(); }
   function onKey(e){ var k=e.key;
     if (!started){ if (k===' '||k==='Enter'||k==='PageDown'||k==='ArrowRight'){ e.preventDefault(); begin(); } return; }
     if (k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'||k==='ArrowDown'){ e.preventDefault(); if (cur===N-1) restartAll(); else show(cur+1); }
@@ -152,22 +138,11 @@ html, body { touch-action: manipulation; }
     else if (k==='r'||k==='R'){ replay(); }
     else if (k==='f'||k==='F'){ fs(); }
     else if (k==='Home'){ restartAll(); }
-    else if (/^[1-6]$/.test(k)){ show(+k-1); }
+    else if (/^[1-7]$/.test(k)){ show(+k-1); }
   }
   function onClick(e, w){ if (!started) return; if (e.clientX < (w||innerWidth)*0.2) show(cur-1); else if (cur<N-1) show(cur+1); }
   addEventListener('keydown', onKey);
-  var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0; if (isTouch) document.body.classList.add('touch');
-  var sx=null, sy=null, lastTap=0;
-  addEventListener('pointerdown', function(e){ sx=e.clientX; sy=e.clientY; }, {passive:true});
-  addEventListener('pointerup', function(e){
-    if (e.target.closest && (e.target.closest('#go')||e.target.closest('#again')||e.target.closest('.nav'))) return;
-    if (!started) return; var now=Date.now(); if (now-lastTap<350) return; lastTap=now;
-    var dx = sx==null ? 0 : e.clientX-sx, dy = sy==null ? 0 : e.clientY-sy;
-    if (Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)) { if (dx<0){ if (cur<N-1) show(cur+1); } else show(cur-1); return; }
-    onClick(e);
-  });
-  document.getElementById('navNext').addEventListener('click', function(e){ e.stopPropagation(); if (cur===N-1) restartAll(); else show(cur+1); });
-  document.getElementById('navPrev').addEventListener('click', function(e){ e.stopPropagation(); show(cur-1); });
+  addEventListener('click', function(e){ if (e.target.closest && (e.target.closest('#go')||e.target.closest('#again'))) return; onClick(e); });
   document.getElementById('go').addEventListener('click', function(e){ e.stopPropagation(); begin(); });
   again.addEventListener('click', function(e){ e.stopPropagation(); restartAll(); });
   preload(0); setTimeout(function(){ preload(1); }, 300);
