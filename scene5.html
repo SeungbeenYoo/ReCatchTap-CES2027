@@ -122,8 +122,8 @@ var XF=null;
 function xp(p){ if (!XF) return p; return [XF.x + p[0]*XF.c + p[2]*XF.s, p[1], XF.z - p[0]*XF.s + p[2]*XF.c]; }
 function xn(n){ if (!XF) return n; return [n[0]*XF.c + n[2]*XF.s, n[1], -n[0]*XF.s + n[2]*XF.c]; }
 var DIM=false;
-function placeBooth(x,z,fn){ var dx=0-x, dz=6-z, l=Math.hypot(dx,dz); XF={x:x,z:z,s:dx/l,c:dz/l}; DIM=true; fn(); DIM=false; XF=null; }
-function quad(p, n, o){ o=o||{}; p=p.map(xp); n=xn(n); var col=hex(o.col||'#ffffff'); faces.push({ dim:DIM, bias:o.bias||0, p:p, n:n, col:col, tex:o.tex||null, uv:o.uv||[0,1], emis:!!o.emis, glow:o.glow||0, sub:o.sub||1, noRefl:!!o.noRefl, alpha:o.alpha==null?1:o.alpha }); }
+function placeBooth(x,z,fn){ var dx=0-x, dz=Math.max(z+7,12)-z, l=Math.hypot(dx,dz); XF={x:x,z:z,s:dx/l,c:dz/l}; DIM=true; fn(); DIM=false; XF=null; }
+function quad(p, n, o){ o=o||{}; p=p.map(xp); n=xn(n); var col=hex(o.col||'#ffffff'); faces.push({ dim:DIM, bias:(DIM && o.tex) ? -2.5 : (o.bias||0), p:p, n:n, col:col, tex:o.tex||null, uv:o.uv||[0,1], emis:!!o.emis, glow:o.glow||0, sub:o.sub||1, noRefl:!!o.noRefl, alpha:o.alpha==null?1:o.alpha }); }
 function box(x0,y0,z0,x1,y1,z1,o){ o=o||{}; var c=o.col||'#f2f3f6', side=o.side||c;
   quad([[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],[0,1,0],{col:o.top||c, emis:o.emisAll});
   quad([[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],[0,-1,0],{col:o.bottom||side, emis:o.emisAll});
@@ -221,7 +221,7 @@ function base(cx,cz,w,d,floorCol,wallCol,wallH){ box(cx-w/2,0,cz-d/2,cx+w/2,0.22
 function hangSign(cx,y,cz,w,h,img,isGlow){ if (!isGlow) box(cx-w/2,y-h/2,cz-0.25,cx+w/2,y+h/2,cz+0.25,{col:'#1b1b20',ftex:img,sub:2}); else { box(cx-w/2-0.2,y+h/2,cz-0.3,cx+w/2+0.2,y+h/2+0.3,cz,{col:'#2a2c33'}); panel([cx,y,cz+0.01],w,h,'z+',{tex:img,emis:true,glow:1,noRefl:true}); } hang(cx-w*0.35,y+h/2+0.3,cz-0.1); hang(cx+w*0.35,y+h/2+0.3,cz-0.1); }
 
 // 1) AI Sleep Passport (왼쪽 앞)
-placeBooth(-23,15,function(){ var cx=0, cz=0, w=14, d=10;
+placeBooth(-15,30,function(){ var cx=0, cz=0, w=14, d=10;
   base(cx,cz,w,d,'#3a332a','#2a241d',5.4);
   box(cx-w/2,0.22,cz-d/2,cx-w/2+0.5,5.4,cz+d/2-2,{col:'#1b1915'});
   panel([cx-w/2+0.51,2.8,cz],5,4.2,'x+',{tex:TT.slpApp,emis:true});
@@ -236,7 +236,7 @@ placeBooth(-23,15,function(){ var cx=0, cz=0, w=14, d=10;
   glow([cx,0.02,cz],8,[232,183,92],0.16);
 });
 // 2) PureMist (오른쪽 앞)
-placeBooth(23,12,function(){ var cx=0, cz=0, w=14, d=10;
+placeBooth(26,8,function(){ var cx=0, cz=0, w=14, d=10;
   base(cx,cz,w,d,'#e8ecf3','#f4f6fa',5.2);
   panel([cx+0.5,2.8,cz-d/2+0.52],9.6,4.4,'z+',{tex:TT.pmWall,emis:true,sub:3});
   // 4색 신호등
@@ -252,7 +252,7 @@ placeBooth(23,12,function(){ var cx=0, cz=0, w=14, d=10;
   glow([cx,0.02,cz],8,[200,220,255],0.12);
 });
 // 3) SeeYA (왼쪽 안쪽)
-placeBooth(-25,0,function(){ var cx=0, cz=0, w=13, d=10;
+placeBooth(16,29,function(){ var cx=0, cz=0, w=13, d=10;
   base(cx,cz,w,d,'#1b1d55','#111369',5.0);
   panel([cx,2.7,cz-d/2+0.52],10,4.0,'z+',{tex:TT.syaWall,emis:true,sub:3});
   // 코너 XR 부스 (유리 박스 느낌)
@@ -264,7 +264,7 @@ placeBooth(-25,0,function(){ var cx=0, cz=0, w=13, d=10;
   glow([cx,0.02,cz],8,[255,9,243],0.16);
 });
 // 4) TRUTHLY (오른쪽 안쪽)
-placeBooth(25,-4,function(){ var cx=0, cz=0, w=13, d=10;
+placeBooth(-25,14,function(){ var cx=0, cz=0, w=13, d=10;
   base(cx,cz,w,d,'#e6eaf4','#eef1f8',5.0);
   panel([cx,2.7,cz-d/2+0.52],10,4.0,'z+',{tex:TT.trWall,emis:true,sub:3});
   [-3.6,-1.2].forEach(function(o){ box(cx+o,0.22,cz+1.2,cx+o+1.4,1.3,cz+1.9,{col:'#1b3a8f'}); panel([cx+o+0.7,1.9,cz+1.6],1.2,0.9,'z+',{col:'#4f86ff',emis:true}); });
@@ -274,7 +274,7 @@ placeBooth(25,-4,function(){ var cx=0, cz=0, w=13, d=10;
   glow([cx,0.02,cz],8,[79,134,255],0.14);
 });
 // 5) Skintelligence (가운데 뒤 · 리캐치 뒤로 간판이 보이게)
-placeBooth(-20,-14,function(){ var cx=0, cz=0, w=16, d=10;
+placeBooth(-26,0,function(){ var cx=0, cz=0, w=16, d=10;
   base(cx,cz,w,d,'#2a1a5c','#2a1470',5.6);
   panel([cx,3.0,cz-d/2+0.52],12,4.6,'z+',{tex:TT.skWall,emis:true,sub:3});
   box(cx-1,0.22,cz+0.6,cx+1,2.2,cz+1.8,{col:'#f6f3ff',top:'#f5c443'});
@@ -342,6 +342,9 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
   rr2(g,80,820,1340,130,24,null,'#f98802',4); g.fillStyle='#f98802'; g.font='900 46px '+FONT; g.fillText('Absolute Blue Ocean',120,900); g.fillStyle='#e8e8ea'; g.font='600 30px '+FONT; g.fillText('결제 직전 개인화 + 자동 실행 · NFC 인식 · 최적 계산 · 바코드',620,895); });
 RC.band=tex(3600,260,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-10,w,10); g.textBaseline='middle'; g.textAlign='center';
   for (var i=0;i<2;i++){ var x=w*(i+.5)/2; g.font='900 96px '+FONT; g.fillStyle='#ffffff'; g.fillText('ReCatch Tap',x-260,h/2); g.fillStyle='#f98802'; g.beginPath(); g.arc(x+70,h/2+28,12,0,7); g.fill(); g.fillStyle='#b9b9c0'; g.font='700 56px '+FONT; g.fillText('Pay Smart, Pay Less.',x+390,h/2+6); } });
+// 맨 위 띠: 전광판처럼 옆으로 흐름
+var BANDSRC=document.createElement('canvas'); BANDSRC.width=RC.band.width; BANDSRC.height=RC.band.height; BANDSRC.getContext('2d').drawImage(RC.band,0,0);
+function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, off=((reduce?0:tt)*260)%w; g.drawImage(BANDSRC,-off,0); g.drawImage(BANDSRC,w-off,0); }
 (function(){ var cx=0, BZ=0.4, H=6.6, HT=8.8, XB=8.6, XF=12.6, ZF=13.4;
   // 사각 플랫폼 (앞쪽 넓은 사다리꼴) + 주황 라인
   quad([[-XB,0.26,BZ],[XB,0.26,BZ],[XF,0.26,ZF],[-XF,0.26,ZF]],[0,1,0],{col:'#1a1a1d'});
@@ -401,16 +404,16 @@ function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.a
 })();
 // 입구 게이트 + CES 2027
 (function(){ var z=36;
-  box(-13,0,z-0.8,-11.4,7.4,z+0.8,{col:'#14161e',side:'#14161e'});
-  box(11.4,0,z-0.8,13,7.4,z+0.8,{col:'#14161e',side:'#14161e'});
-  box(-13,7.4,z-0.8,13,9.4,z+0.8,{col:'#0d0f16',front:'#0d0f16'});
+  box(-18.6,0,z-0.8,-17,7.4,z+0.8,{col:'#14161e',side:'#14161e'});
+  box(17,0,z-0.8,18.6,7.4,z+0.8,{col:'#14161e',side:'#14161e'});
+  box(-18.6,7.4,z-0.8,18.6,9.4,z+0.8,{col:'#0d0f16',front:'#0d0f16'});
   panel([0,8.4,z+0.81],20,1.7,'z+',{tex:T.lv,emis:true});
   panel([0,11.7,z+0.2],19,5.0,'z+',{tex:T.ces,emis:true,glow:1,noRefl:true});
-  strip([-11.35,0.2,z+0.82],[-11.35,7.3,z+0.82],'rgba(111,149,255,0.95)',3);
-  strip([11.35,0.2,z+0.82],[11.35,7.3,z+0.82],'rgba(111,149,255,0.95)',3);
-  strip([-12.9,7.35,z+0.82],[12.9,7.35,z+0.82],'rgba(111,149,255,0.95)',3);
+  strip([-16.95,0.2,z+0.82],[-16.95,7.3,z+0.82],'rgba(111,149,255,0.95)',3);
+  strip([16.95,0.2,z+0.82],[16.95,7.3,z+0.82],'rgba(111,149,255,0.95)',3);
+  strip([-18.5,7.35,z+0.82],[18.5,7.35,z+0.82],'rgba(111,149,255,0.95)',3);
   // 출입 게이트 기둥
-  [-6,-2,2,6].forEach(function(x){ box(x-0.25,0,z-0.5,x+0.25,1.1,z+0.5,{col:'#2a2d38',top:'#6f95ff'}); });
+  [-10,-6,-2,2,6,10].forEach(function(x){ box(x-0.25,0,z-0.5,x+0.25,1.1,z+0.5,{col:'#2a2d38',top:'#6f95ff'}); });
   glow([0,0.02,z+1],12,[90,130,255],0.14);
 })();
 
@@ -426,14 +429,14 @@ var SKIN=['#f1c8a5','#d9a27a','#a8714f','#7a4b32','#ecc19c','#c68863'];
 var HAIR=['#1b1512','#3a2a1e','#5c4330','#121212','#8a6a4a','#2a2a2e'];
 var TOPS=['#e8e8ec','#2a3550','#7a2e3a','#3f6b57','#c9ced8','#1f2433','#8a6f4e','#4a5a8a','#d6c2a1','#333842'];
 var BOTS=['#1d1f26','#2b3346','#4a4f5c','#3b3226','#20242e'];
-var WALKNET=[[-7,27],[7,27],[-8,21],[8,21],[-12,16],[12,16],[-14,9],[14,9],[-13,1],[13,1],[-10,-6],[10,-6],[-4,-8],[4,-8],[0,-10],[-16,24],[16,24],[-9,32],[9,32],[-18,30],[18,30],[-20,18],[20,18]];
+var WALKNET=[[-6,31],[6,31],[-7,22],[7,22],[-12,15],[12,16],[-14,1],[15,0],[-10,-6],[10,-6],[-4,-8],[4,-8],[0,-10],[-8,38],[8,38]];
 var FAN_RATIO=0.86;
 function rnd(a,b){return a+Math.random()*(b-a);}
 function pickOf(a){ return a[Math.floor(Math.random()*a.length)]; }
 function fanSpot(){ return boothSpot(); }
 var npcs=[];
 function mkP(x,z,fan,node){ return { fan:fan, x:x, z:z, vx:0, vz:0, tx:x, tz:z, sp:rnd(0.9,1.25), ph:rnd(0,6), spd:0, face:null, skin:pickOf(SKIN), hair:pickOf(HAIR), top:pickOf(TOPS), bot:pickOf(BOTS), sc:rnd(0.93,1.07), wait:fan?0:rnd(0,3), node:node||0, sway:rnd(0,6), fanT:1e9 }; }
-function boothSpot(){ var sd=Math.random()<0.5?-1:1, r=Math.random(); if (r<0.4) return [sd*rnd(6.6,9.4), rnd(3.5,11.5)]; if (r<0.8) return [sd*rnd(5.2,11.2), rnd(14.2,17.2)]; return [sd*rnd(9.5,11.5), rnd(11.6,13.2)]; }
+function boothSpot(){ var sd=Math.random()<0.5?-1:1, r=Math.random(); if (r<0.4) return [sd*rnd(5.0,11.0), rnd(15.0,18.0)]; if (r<0.8) return [sd*rnd(5.2,11.2), rnd(14.2,17.2)]; return [sd*rnd(9.5,11.5), rnd(11.6,13.2)]; }
 for (var i=0;i<52;i++){ var f=boothSpot(); npcs.push(mkP(f[0],f[1],true)); }
 for (var j=0;j<6;j++){ var nd=(j*4)%WALKNET.length, q=WALKNET[nd]; npcs.push(mkP(q[0]+rnd(-1.5,1.5), q[1]+rnd(-1.5,1.5), false, nd)); }
 function nextNode(p){ var cur=WALKNET[p.node], c=[]; WALKNET.forEach(function(q,j){ if (j!==p.node && Math.hypot(q[0]-cur[0],q[1]-cur[1])<12) c.push(j); }); p.node=c.length?pickOf(c):Math.floor(Math.random()*WALKNET.length); var q=WALKNET[p.node]; p.tx=q[0]+rnd(-1.2,1.2); p.tz=q[1]+rnd(-1.2,1.2); }
@@ -519,7 +522,7 @@ function drawFace(f, cs, z, refl){
       texTri(img,a,b,c,[U0,v0*ih],[U1,v0*ih],[U1,v1*ih]); texTri(img,a,c,d,[U0,v0*ih],[U1,v1*ih],[U0,v1*ih]);
     }
     if (f.glow) ctx.restore();
-    if (f.dim && !f.glow){ path(cs); ctx.fillStyle='rgba(4,5,9,0.5)'; ctx.fill(); }
+    if (f.dim && !f.glow){ path(cs); ctx.fillStyle='rgba(4,5,9,0.36)'; ctx.fill(); }
     if (fa>0.01 && !f.glow){ path(cs); ctx.fillStyle=rgba(FOG,fa); ctx.fill(); }
     return;
   }
@@ -621,7 +624,7 @@ function bloom(){ if (reduce) return; var bw=Math.max(64,Math.round(W/6)), bh=Ma
   bctx.globalCompositeOperation='copy'; bctx.filter='brightness(0.62) contrast(2.6) saturate(1.25) blur(3px)'; bctx.drawImage(cv,0,0,bw,bh); bctx.filter='none';
   ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=me.since>2.6?0.8:0.5; ctx.imageSmoothingEnabled=true; ctx.drawImage(BL,0,0,cv.width,cv.height); ctx.restore(); }
 function frame(t){
-  var tt=t/1000; spinRings(tt); drawTower(tt, Math.min(0.1, tt-(frame.lt||tt))); frame.lt=tt;
+  var tt=t/1000; spinRings(tt); scrollBand(tt); drawTower(tt, Math.min(0.1, tt-(frame.lt||tt))); frame.lt=tt;
   // 카메라: 천천히 다가가며 살짝 흔들림
   // 카메라: 나를 뒤에서 따라감
   // 장면 1 시점 → 1인칭 (흔들림 없음)
