@@ -338,7 +338,7 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
 // 양옆 벽: 팀 자료 이미지 (왼쪽 = 프로덕트 소개, 오른쪽 = 시장·차별점·기술)
 // 확대 장면(신3·신4)에서는 영문판을 먼저 보여 주고 1초 뒤 한글판으로 자연스럽게 바뀜 (영문 파일이 없으면 한글만)
 var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
-(function(){ function load(src,cb){ var im=new Image(); im.onload=function(){ cb(im); }; im.src=src; }
+(function(){ function load(src,cb){ var im=new Image(), alt=src.replace(/\.jpg$/,'.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
   function setup(o,kr,en){ load(kr,function(im){ o.kr=im; WALLFX.paint(o,0); }); load(en,function(im){ o.en=im; WALLFX.paint(o,0); }); }
   WALLFX.paint=function(o,mix){ var c=o.c; if (!o.kr) return; if (c.width!==2400){ c.width=2400; c.height=1380; } var g=c.getContext('2d'), w=c.width, h=c.height;
     g.globalAlpha=1; g.fillStyle='#fffaf4'; g.fillRect(0,0,w,h);
@@ -430,8 +430,8 @@ function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.a
 var N_PEOPLE=0;
 var PATH=[[2.1,45.6],[0,39],[0,33],[0,17.2]];
 // 카메라 경로: [초, x, y, z, 좌우(yaw), 위아래(pitch), fov]  — 0초 = 장면 1 시점, 1.4초에 1인칭으로 전환
-var KEYS=[[0,-1.4,2.35,53.2,0.054,0.10,60],[1.3,0.6,2.0,49.0,0.03,0.10,61],[2.6,2.1,1.68,45.2,0.0,0.10,63],[7.2,0.6,1.7,38.5,-1.05,0.05,62],[12.3,0,1.7,31.5,1.05,0.05,62],[15.6,0,1.78,27.6,0.02,0.08,58],[16.8,0,1.85,26.0,0,0.1,56]];
-var TOTAL=16.8;
+var KEYS=[[0,-1.4,2.35,53.2,0.054,0.10,60],[1.25,0.6,2.0,49.0,0.03,0.10,61],[2.5,2.1,1.68,45.2,0.0,0.10,63],[5,0.6,1.7,38.5,-1.05,0.05,62],[7.5,0,1.7,31.5,1.05,0.05,62],[10,0,1.78,27.6,0.02,0.08,58],[12.5,0,1.85,26.0,0,0.1,56]];
+var TOTAL=12.5;
 var me = { x:2.1, z:45.6, y:2.35, seg:0, walking:false, ph:0, t0:null, done:0, yaw:0.05, pitch:0.1, fov:60, cx:-1.4, cz:53.2, since:0 };
 var cpos=null, ctgt=null;
 // 사람
@@ -662,7 +662,7 @@ window.__ready=true;
 function update(dt){
   if (me.t0===null) me.t0=performance.now();
   var raw=Math.min(TOTAL,(performance.now()-me.t0)/1000); me.since=raw;
-  var tt2=TOTAL*(0.5-0.5*Math.cos(Math.PI*raw/TOTAL)), k=KEYS, i=0; if (reduce) tt2=TOTAL;
+  var tt2=(function(r){ if (r<=0) return 0; if (r>=TOTAL) return TOTAL; var SG=2.5; if (r<SG){ var u=r/SG; return SG*u*u*(2-u); } if (r>TOTAL-SG){ var v=(TOTAL-r)/SG; return TOTAL-SG*v*v*(2-v); } return r; })(raw), k=KEYS, i=0; if (reduce) tt2=TOTAL;
   while (i<k.length-2 && tt2>k[i+1][0]) i++;
   var u=clamp((tt2-k[i][0])/(k[i+1][0]-k[i][0]),0,1), P0=k[Math.max(0,i-1)], P1=k[i], P2=k[i+1], P3=k[Math.min(k.length-1,i+2)];
   var cr=function(j){ var a0=P0[j],a1=P1[j],a2=P2[j],a3=P3[j]; return 0.5*((2*a1)+(-a0+a2)*u+(2*a0-5*a1+4*a2-a3)*u*u+(-a0+3*a1-3*a2+a3)*u*u*u); };

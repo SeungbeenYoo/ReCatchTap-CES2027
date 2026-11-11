@@ -354,7 +354,7 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
 // 양옆 벽: 팀 자료 이미지 (왼쪽 = 프로덕트 소개, 오른쪽 = 시장·차별점·기술)
 // 확대 장면(신3·신4)에서는 영문판을 먼저 보여 주고 1초 뒤 한글판으로 자연스럽게 바뀜 (영문 파일이 없으면 한글만)
 var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
-(function(){ function load(src,cb){ var im=new Image(); im.onload=function(){ cb(im); }; im.src=src; }
+(function(){ function load(src,cb){ var im=new Image(), alt=src.replace(/\.jpg$/,'.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
   function setup(o,kr,en){ load(kr,function(im){ o.kr=im; WALLFX.paint(o,0); }); load(en,function(im){ o.en=im; WALLFX.paint(o,0); }); }
   WALLFX.paint=function(o,mix){ var c=o.c; if (!o.kr) return; if (c.width!==2400){ c.width=2400; c.height=1380; } var g=c.getContext('2d'), w=c.width, h=c.height;
     g.globalAlpha=1; g.fillStyle='#fffaf4'; g.fillRect(0,0,w,h);

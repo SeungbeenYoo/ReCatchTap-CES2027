@@ -347,7 +347,7 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
 // 양옆 벽: 팀 자료 이미지 (왼쪽 = 프로덕트 소개, 오른쪽 = 시장·차별점·기술)
 // 확대 장면(신3·신4)에서는 영문판을 먼저 보여 주고 1초 뒤 한글판으로 자연스럽게 바뀜 (영문 파일이 없으면 한글만)
 var WALLFX={ side:'L', L:{c:RC.wingL}, R:{c:RC.wingR} };
-(function(){ function load(src,cb){ var im=new Image(); im.onload=function(){ cb(im); }; im.src=src; }
+(function(){ function load(src,cb){ var im=new Image(), alt=src.replace(/\.jpg$/,'.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
   function setup(o,kr,en){ load(kr,function(im){ o.kr=im; WALLFX.paint(o,0); }); load(en,function(im){ o.en=im; WALLFX.paint(o,0); }); }
   WALLFX.paint=function(o,mix){ var c=o.c; if (!o.kr) return; if (c.width!==2400){ c.width=2400; c.height=1380; } var g=c.getContext('2d'), w=c.width, h=c.height;
     g.globalAlpha=1; g.fillStyle='#fffaf4'; g.fillRect(0,0,w,h);
@@ -675,11 +675,12 @@ window.__ready=true;
 function update(dt){
   if (me.t0===null) me.t0=performance.now();
   var raw=Math.min(TOTAL,(performance.now()-me.t0)/1000); me.since=raw;
-  var tt2=raw, k=KEYS, i=0; if (reduce) tt2=TOTAL;
+  var k=KEYS, ARR=k[k.length-2][0], _e=clamp(raw/ARR,0,1), tt2=ARR*_e*_e*_e*(_e*(_e*6-15)+10), i=0; if (reduce) tt2=ARR;   // 천천히 출발 → 도착하면 완전히 고정
   while (i<k.length-2 && tt2>k[i+1][0]) i++;
   var u=clamp((tt2-k[i][0])/(k[i+1][0]-k[i][0]),0,1), P0=k[Math.max(0,i-1)], P1=k[i], P2=k[i+1], P3=k[Math.min(k.length-1,i+2)];
   var cr=function(j){ var a0=P0[j],a1=P1[j],a2=P2[j],a3=P3[j]; return 0.5*((2*a1)+(-a0+a2)*u+(2*a0-5*a1+4*a2-a3)*u*u+(-a0+3*a1-3*a2+a3)*u*u*u); };
   me.cx=cr(1); me.y=cr(2); me.cz=cr(3); me.yaw=cr(4); me.pitch=cr(5); me.fov=cr(6);
+  if (raw>=ARR || reduce){ var F=k[k.length-2]; me.cx=F[1]; me.y=F[2]; me.cz=F[3]; me.yaw=F[4]; me.pitch=F[5]; me.fov=F[6]; }
   me.x=me.cx; me.z=me.cz; me.walking=false;
   updatePeople(dt); updateStaff(dt);
 }
