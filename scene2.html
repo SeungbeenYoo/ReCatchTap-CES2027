@@ -351,7 +351,7 @@ var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
     var dr=function(im,a){ if (!im || a<=0) return; g.globalAlpha=a; g.imageSmoothingQuality='high'; g.filter='brightness(1.14) contrast(1.06) saturate(1.05)'; g.drawImage(im,0,0,w,h); g.filter='none'; };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg?v=20261114j','images/wall_left_en.jpg?v=20261114j'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114j','images/wall_right_en.jpg?v=20261114j'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261114q','images/wall_left_en.jpg?v=20261114q'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114q','images/wall_right_en.jpg?v=20261114q'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
 RC.band=tex(3600,260,function(g,w,h){ });
@@ -464,8 +464,8 @@ function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.a
 var N_PEOPLE=0;
 var PATH=[[2.1,45.6],[0,39],[0,33],[0,17.2]];
 // 카메라 경로: [초, x, y, z, 좌우(yaw), 위아래(pitch), fov]  — 0초 = 장면 1 시점, 1.4초에 1인칭으로 전환
-var KEYS=[[0,-1.4,2.35,53.2,0.054,0.10,60],[1.25,0.6,2.0,49.0,0.03,0.10,61],[2.5,2.1,1.68,45.2,0.0,0.10,63],[5,0.6,1.7,38.5,-1.05,0.05,62],[7.5,0,1.7,31.5,1.05,0.05,62],[10,0,2.7,33.0,0.0,0.02,50],[12.5,0,3.1,35.0,0,0.01,46]];
-var TOTAL=12.5;
+var KEYS=[[0,-1.4,2.35,53.2,0.054,0.10,60],[1.25,0.6,2.0,49.0,0.03,0.10,61],[2.5,2.1,1.68,45.2,0.0,0.10,63],[4.2,0.6,1.7,38.5,-1.05,0.05,62],[5.9,0,1.7,31.5,1.05,0.05,62],[7.5,0,2.7,33.0,0.0,0.02,50],[10,0,3.1,35.0,0,0.01,46]];
+var TOTAL=10;
 var me = { x:2.1, z:45.6, y:2.35, seg:0, walking:false, ph:0, t0:null, done:0, yaw:0.05, pitch:0.1, fov:60, cx:-1.4, cz:53.2, since:0 };
 var cpos=null, ctgt=null;
 // 사람
