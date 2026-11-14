@@ -367,7 +367,7 @@ var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
     var dr=function(im,a){ if (!im || a<=0) return; g.globalAlpha=a; g.imageSmoothingQuality='high'; g.filter='brightness(1.14) contrast(1.06) saturate(1.05)'; g.drawImage(im,0,0,w,h); g.filter='none'; };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg?v=20261114j','images/wall_left_en.jpg?v=20261114j'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114j','images/wall_right_en.jpg?v=20261114j'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261114r','images/wall_left_en.jpg?v=20261114r'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114r','images/wall_right_en.jpg?v=20261114r'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
 RC.band=tex(3600,260,function(g,w,h){ });
