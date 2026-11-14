@@ -429,7 +429,7 @@ var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
     var dr=function(im,a){ if (!im || a<=0) return; g.globalAlpha=a; g.imageSmoothingQuality='high'; g.filter='brightness(1.14) contrast(1.06) saturate(1.05)'; g.drawImage(im,0,0,w,h); g.filter='none'; };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg?v=20261114f','images/wall_left_en.jpg?v=20261114f'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114f','images/wall_right_en.jpg?v=20261114f'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261114j','images/wall_left_en.jpg?v=20261114j'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114j','images/wall_right_en.jpg?v=20261114j'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
 RC.band=tex(3600,260,function(g,w,h){ });
@@ -486,6 +486,17 @@ scrollBand(0);
   });
   // 천장 프레임 (앞 보)
   box(-XF-0.35,HT,ZF-0.35,XF+0.35,HT+0.6,ZF+0.35,{col:'#1a1a1d',front:'#202024'}); strip([-XF,HT+0.6,ZF+0.36],[XF,HT+0.6,ZF+0.36],'rgba(255,150,40,0.95)',2.5);
+  // 1:1 상담 부스 (정면 왼쪽, R. 로고 아래)
+  (function(){ var sign=tex(900,220,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-16,w,16);
+      g.fillStyle='#ffffff'; g.font='900 92px '+FONT; g.textAlign='center'; g.textBaseline='middle'; g.fillText('1:1 상담',w/2,h/2-24); g.fillStyle='#f98802'; g.font='800 40px '+FONT; g.fillText('CONSULTING · 파일럿 문의',w/2,h/2+60); });
+    box(-7.95,0.26,7.20,-4.55,0.34,10.80,{col:'#3a2a18',front:'#4a3520'});
+    box(-7.85,0.26,7.10,-4.65,2.02,7.40,{col:'#f98802',front:'#f98802'});
+    panel([-6.25,1.68,7.42],2.5,0.58,'z+',{tex:sign,emis:true,sub:1});
+    box(-7.25,0.26,8.95,-5.25,0.84,9.55,{col:'#f4f4f6',front:'#ffffff'});
+    box(-7.25,0.74,9.54,-5.25,0.81,9.57,{col:'#f98802',front:'#f98802'});
+    box(-6.15,0.26,8.20,-5.65,0.70,8.65,{col:'#26262b',front:'#303036'});
+    box(-7.00,0.26,10.10,-6.30,0.70,10.60,{col:'#26262b',front:'#303036'}); box(-7.00,0.70,10.50,-6.30,1.08,10.60,{col:'#26262b',front:'#303036'});
+    box(-7.00,0.84,9.05,-6.55,1.12,9.15,{col:'#141416',front:'#1c1c20'}); })();
   // 원통 체험 포디움 3대 + 폰
   var cz=6;
   [-4.4,0,4.4].forEach(function(x,i){ var z=cz+3.1;
@@ -650,11 +661,13 @@ var OUT_BOT=['#77704a','#2f4a6d','#1b1c20','#4b4e55','#c2b08e','#3a3d45','#25344
 var OUT_SKIN=['#f0c8a8','#e2b08c','#d8a47f','#c48a63','#a86f4b','#8a5a3c'];
 var OUT_HAIR=['#141414','#1f1813','#3a2a1e','#5c4330','#8a6a45','#b8b2a8'];
 function outfit(o){ if (!o.oc){ var r=function(a){ return a[Math.floor(Math.random()*a.length)]; }, tp=r(OUT_TOP); o.oc={ top:tp[0], knit:!!tp[1], bot:r(OUT_BOT), skin:r(OUT_SKIN), hair:Math.random()<0.12?r(OUT_HAIR.slice(4)):r(OUT_HAIR.slice(0,4)) }; } return o.oc; }
+var CONSULT=[{x:-5.9,z:8.45,sc:0.9,spd:0,ph:0,sway:0,front:true,long:true,oc:{top:'#f4f4f6',knit:false,bot:'#2a2a30',skin:'#f1c9a8',hair:'#2a1810'}},
+  {x:-6.65,z:10.3,sc:0.9,spd:0,ph:0,sway:0,front:false,suit:true,oc:{top:'#23293a',knit:false,bot:'#23293a',skin:'#e2b08c',hair:'#e9e9ec'}}];
 function drawPerson(c, p, isMe, t){
   var gv=p.gv!=null?p.gv:(p.gv=Math.random()*0.16-0.08); var G=function(b){ var v=Math.round(clamp(b*(1+gv),0,255)); return '#'+[v,v,v].map(function(x){return ('0'+x.toString(16)).slice(-2);}).join(''); };
   if (isMe==='staff'){ p={ sc:1.12, staff:true, spd:STAFF.spd, ph:STAFF.ph, sway:0, skin:'#d8a47f', hair:'#141414', top:'#b3b3b8', bot:'#3c5a86', knit:false, zip:true, lan:true }; isMe=false; }
   else if (isMe===true) p={ sc:1.12, spd:0, ph:0, sway:0, skin:'#d8a47f', hair:'#141414', top:'#b3b3b8', bot:'#3c5a86', knit:false, zip:true, lan:true };
-  else { var oc=outfit(p); p={ sc:p.sc, fan:p.fan, face:p.face, spd:p.spd, ph:p.ph, sway:p.sway, skin:oc.skin, hair:oc.hair, top:oc.top, bot:oc.bot, knit:oc.knit }; }
+  else { var oc=outfit(p); p={ sc:p.sc, fan:p.fan, face:p.face, long:p.long, spd:p.spd, ph:p.ph, sway:p.sway, skin:oc.skin, hair:oc.hair, top:oc.top, bot:oc.bot, knit:oc.knit, front:p.front, suit:p.suit }; }
   var s=focal/c[2], foot=proj(c), h=1.72*p.sc*s, w=h*0.27, fa=fogA(c[2]);
   var fc=function(hx,k){ var q=hex(hx); k=k||1; return rgba([lerp(q[0]*k,FOG[0],fa),lerp(q[1]*k,FOG[1],fa),lerp(q[2]*k,FOG[2],fa)],1); };
   var moving = isMe ? me.walking : p.spd>0.18, ph = isMe ? (me.ph||0) : p.ph, sw = moving ? Math.sin(ph) : 0;
@@ -685,6 +698,7 @@ function drawPerson(c, p, isMe, t){
   if (p.mq){ var hg=ctx.createRadialGradient(-hr*0.3,hy-hr*0.35,hr*0.1,0,hy,hr*1.05); hg.addColorStop(0,'rgba(255,255,255,0.35)'); hg.addColorStop(1,'rgba(0,0,0,0.1)'); ctx.fillStyle=hg; ctx.beginPath(); ctx.ellipse(0,hy,hr*0.84,hr,0,0,7); ctx.fill(); }
   else if (back){ ctx.beginPath(); ctx.ellipse(0,hy-hr*0.04,hr*0.88,hr*0.98,0,0,7); ctx.fill(); }
   else { ctx.beginPath(); ctx.ellipse(0,hy-hr*0.32,hr*0.9,hr*0.7,0,Math.PI,Math.PI*2); ctx.fill(); if (p.staff){ ctx.fillStyle='#1d1d1f'; ctx.fillRect(-hr*0.36,hy-hr*0.05,hr*0.16,hr*0.12); ctx.fillRect(hr*0.2,hy-hr*0.05,hr*0.16,hr*0.12); ctx.fillStyle='rgba(120,60,40,0.55)'; ctx.fillRect(-hr*0.2,hy+hr*0.42,hr*0.4,hr*0.07); } }
+  if (p.long && !back){ ctx.fillStyle=fc(p.hair); ctx.beginPath(); rrp(-hr*1.02,hy-hr*0.5,hr*0.36,hr*1.9,hr*0.18); rrp(hr*0.66,hy-hr*0.5,hr*0.36,hr*1.9,hr*0.18); ctx.fill(); }
   if (p.staff && !MIRROR){ ctx.fillStyle='#1d1d1f'; ctx.beginPath(); ctx.arc(-hr*0.32,hy+hr*0.05,hr*0.09,0,7); ctx.arc(hr*0.32,hy+hr*0.05,hr*0.09,0,7); ctx.fill();
     ctx.strokeStyle='#8a5a3c'; ctx.lineWidth=Math.max(1,hr*0.08); ctx.beginPath(); ctx.arc(0,hy+hr*0.35,hr*0.25,0.2,Math.PI-0.2); ctx.stroke();
     ctx.strokeStyle='#f98802'; ctx.lineWidth=Math.max(1.5,w*0.06); ctx.beginPath(); ctx.moveTo(-w*0.2,tTop+h*0.01); ctx.lineTo(0,tTop+tH*0.5); ctx.lineTo(w*0.2,tTop+h*0.01); ctx.stroke();
@@ -716,6 +730,7 @@ function buildList(t){
 
   var sc2=toCam([STAFF.x,0,STAFF.z]); if (sc2[2]>NEAR && !MIRROR) list.push({k:'s',c:sc2,z:sc2[2]});
   if (!MIRROR) CONES.forEach(function(c){ var A=toCam(c.a), B=toCam(c.b); list.push({k:'c',c:c,A:A,B:B,z:Math.min(A[2],B[2])-0.5}); });
+  if (!MIRROR) CONSULT.forEach(function(p){ var c=toCam([p.x,0,p.z]); if (c[2]>NEAR) list.push({k:'p',p:p,c:c,z:c[2]}); });
   list.sort(function(a,b){return b.z-a.z;});
   return list;
 }
