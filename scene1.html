@@ -30,9 +30,9 @@ html.embed .brand, html.embed .tag { display: none !important; }
 .rdoor.l svg{right:-41.3vh} .rdoor.r svg{left:-41.3vh}
 .rdoor:after{content:"";position:absolute;top:0;bottom:0;width:.5vw;background:#f98802;box-shadow:0 0 3vh #f98802}
 .rdoor.l:after{right:0} .rdoor.r:after{left:0}
-.rdoor.go.l{animation:rdl 1.1s cubic-bezier(.6,0,.3,1) forwards} .rdoor.go.r{animation:rdr 1.1s cubic-bezier(.6,0,.3,1) forwards}
+.rdoor.go.l{animation:rdl 2.6s cubic-bezier(.45,0,.25,1) forwards} .rdoor.go.r{animation:rdr 2.6s cubic-bezier(.45,0,.25,1) forwards}
 @keyframes rdl{to{transform:translateX(-100%)}} @keyframes rdr{to{transform:translateX(100%)}}
-.cap{opacity:0} .cap.go{animation:rdcap .6s .9s ease-out forwards}
+.cap{opacity:0} .cap.go{animation:rdcap .8s 2.0s ease-out forwards}
 @keyframes rdcap{from{opacity:0;transform:translateY(2vh)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.rdoor.go{animation:none!important;display:none} .cap.go{animation:none!important;opacity:1} .rdoor.wait:after,.rdoor.wait ~ .rdhint{animation:none!important}}
 .rdoor.wait:after{animation:seam 1.6s ease-in-out infinite}

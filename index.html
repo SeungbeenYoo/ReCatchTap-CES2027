@@ -77,7 +77,7 @@ iframe.pre { z-index: 1; visibility: hidden; }
 .start .prog{display:inline-flex;align-items:center;gap:1vh;font-size:1.9vh;font-weight:800;border:.2vh solid rgba(249,136,2,.85);border-radius:99px;padding:.8vh 2vh;background:rgba(0,0,0,.35)}
 .start .prog i{font-style:normal;color:#ffb24d}
 .start .wmk{margin-top:4vh;display:flex;align-items:flex-end;gap:2vh;font:700 13vh/1 'Space Grotesk','Noto Sans KR',sans-serif;letter-spacing:-.04em;color:#fff}
-.start .wmk svg{height:9vh;width:auto;margin-bottom:1.4vh}
+.start .wmk svg{height:9vh;width:auto;margin-bottom:1.4vh} .start .wmk .ef{position:relative;display:inline-block;margin-right:.14em;padding:0 .06em} .start .wmk .ef svg{position:absolute;left:-.04em;right:-.04em;top:.2em;bottom:-.06em;width:calc(100% + .08em);height:auto;margin:0}
 .start .wmk b{color:var(--accent)}
 .start .slg{margin-top:3vh;font-size:5.4vh;font-weight:900;color:var(--accent);line-height:1.2}
 .start .row{margin-top:6vh;display:flex;align-items:center;gap:3vh;flex-wrap:wrap}
@@ -96,7 +96,7 @@ iframe.pre { z-index: 1; visibility: hidden; }
     <path d="M170 -20 H420 A250 250 0 0 1 420 480 H170 V320 H410 A90 90 0 0 0 410 140 H170Z" fill="url(#sr2)"/><rect x="40" y="-20" width="190" height="940" fill="url(#sr1)"/><path d="M250 330 L450 330 L790 920 L590 920Z" fill="url(#sr3)"/></svg>
   <div class="st-t">
     <span class="prog">생성형 AI 활용 해외마케팅 <i>(CES 2027 연계)</i></span>
-    <div class="wmk"><svg viewBox="0 0 60 64" aria-hidden="true"><g fill="#fff"><rect x="0" width="6" height="64"/><rect x="10" width="3" height="64"/><rect x="17" width="8" height="64"/><rect x="29" width="3" height="64"/><rect x="36" width="5" height="64"/><rect x="45" width="3" height="64"/><rect x="52" width="8" height="64"/></g></svg><span>catch<b>.</b>tap</span></div>
+    <div class="wmk"><span><span class="ef">e<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#f98802" stroke-width="5"><path d="M2 20V2H20"/><path d="M80 2H98V20"/><path d="M2 80V98H20"/><path d="M98 80V98H80"/></g></svg></span>Catch<b>.</b>tap</span></div>
     <p class="slg">계산대에서<br>혜택을 놓치지 마세요.</p>
     <div class="row"><button type="button" class="go" id="go">발표 시작 ▶</button><div class="team"><b>유승빈</b><b>박지윤</b><b>이창민</b><b>백종민</b></div></div>
   </div>
@@ -150,7 +150,7 @@ iframe.pre { z-index: 1; visibility: hidden; }
   function arm(){ if (armed||started) return; armed=true; document.getElementById('start').classList.add('armed'); enterFs(); }
   function begin(){ if (started) return; started=true; armed=false; lockUntil=Date.now()+1600; var st=document.getElementById('start'); st.classList.remove('armed'); document.body.classList.add('hide-cursor'); enterFs(); show(0);
     setTimeout(function(){ st.classList.add('leaving'); hud(true); }, 350); setTimeout(function(){ st.classList.add('gone'); st.classList.remove('leaving'); }, 1500); }
-  function restartAll(){ started=false; armed=false; document.getElementById('start').classList.remove('armed'); cur=-1; if (live && live.parentNode) live.parentNode.removeChild(live); live=null;
+  function restartAll(){ stopDoor(); started=false; armed=false; document.getElementById('start').classList.remove('armed'); cur=-1; if (live && live.parentNode) live.parentNode.removeChild(live); live=null;
     again.classList.remove('on'); tag.innerHTML=''; hud(false);
     document.getElementById('start').classList.remove('gone'); document.body.classList.remove('hide-cursor'); preload(0); preload(1); document.getElementById('go').focus(); }
   function onKey(e){ var k=e.key; if (e.repeat) { e.preventDefault(); return; }
@@ -162,7 +162,25 @@ iframe.pre { z-index: 1; visibility: hidden; }
     else if (k==='Home'){ restartAll(); }
     else if (/^[1-7]$/.test(k)){ show(+k-1); }
   }
-  function rdOpen(){ if (Date.now()<lockUntil) return true; try { return !!(live && live.contentWindow.__rdOpen && live.contentWindow.__rdOpen()); } catch(err){ return false; } }
+  // R 문 열림 사운드: sound/door.mp3 파일을 넣으면 문이 열릴 때 재생 (없으면 무음)
+  //   #snd=12.5 → 12.5초 지점부터 재생, #sndlen=8 → 8초 뒤 페이드아웃
+  var DOOR=(function(){ var a=new Audio(); a.preload='auto'; a.src='sound/door.mp3'; a.onerror=function(){ if (a.src.indexOf('.m4a')<0){ a.src='sound/door.m4a'; } else a.dead=true; }; return a; })();
+  var SND_AT=parseFloat((location.hash.match(/snd=([\d.]+)/)||[])[1]||'0'), SND_LEN=parseFloat((location.hash.match(/sndlen=([\d.]+)/)||[])[1]||'0');
+  var AC=null;
+  function sfxDoor(){ try { if (!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if (AC.state==='suspended') AC.resume(); var c=AC, m=c.createGain(); m.gain.value=0.9; var cp=c.createDynamicsCompressor(); m.connect(cp); cp.connect(c.destination);
+      var rv=c.createConvolver(), L=c.sampleRate*2, b=c.createBuffer(2,L,c.sampleRate); for (var ch=0;ch<2;ch++){ var d=b.getChannelData(ch); for (var i=0;i<L;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/L,3); } rv.buffer=b; var rg=c.createGain(); rg.gain.value=0.45; rv.connect(rg); rg.connect(m);
+      function env(g,t,v,a,d){ g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+a+d); }
+      function tone(t0,f,f2,type,d,v,lp,wet,a,lp2,det){ a=a||0.005; var t=c.currentTime+t0, o=c.createOscillator(), g=c.createGain(), n=o; o.type=type; if (det) o.detune.value=det; o.frequency.setValueAtTime(f,t); if (f2) o.frequency.exponentialRampToValueAtTime(f2,t+0.5); if (lp){ var fl=c.createBiquadFilter(); fl.type='lowpass'; fl.frequency.setValueAtTime(lp,t); if (lp2) fl.frequency.exponentialRampToValueAtTime(lp2,t+a+d*0.6); o.connect(fl); n=fl; } n.connect(g); g.connect(m); if (wet){ var s=c.createGain(); s.gain.value=wet; g.connect(s); s.connect(rv); } env(g,t,v,a,d); o.start(t); o.stop(t+a+d+0.1); }
+      function noise(t0,d,v,type,f,f2,q,a){ var t=c.currentTime+t0, n=Math.ceil(c.sampleRate*(d+0.1)), bb=c.createBuffer(1,n,c.sampleRate), x=bb.getChannelData(0); for (var i=0;i<n;i++) x[i]=Math.random()*2-1; var s=c.createBufferSource(); s.buffer=bb; var fl=c.createBiquadFilter(); fl.type=type; fl.Q.value=q; fl.frequency.setValueAtTime(f,t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2,t+d); var g=c.createGain(); env(g,t,v,a,d); s.connect(fl); fl.connect(g); g.connect(m); s.start(t); s.stop(t+d+0.1); }
+      // 시안 01 · 시네마 타-둠
+      function boom(t,f,v){ tone(t,f,38,'sine',1.1,v); noise(t,0.12,0.25,'lowpass',900,0,0.7,0.01); }
+      boom(0,98,0.85); tone(0,196,0,'triangle',0.5,0.18,900); boom(0.42,82,1);
+      [82,123,165,247].forEach(function(f,i){ tone(0.42,f,0,'sawtooth',2.2,0.07,1400,0.5,0.06,300,i*4); });
+    } catch(e){} }
+  function playDoor(){ if (DOOR.dead){ sfxDoor(); return; } try { DOOR.pause(); DOOR.currentTime=SND_AT; DOOR.volume=1; var pr=DOOR.play(); if (pr && pr.catch) pr.catch(function(){});
+    if (SND_LEN>0){ clearInterval(DOOR._f); setTimeout(function(){ DOOR._f=setInterval(function(){ DOOR.volume=Math.max(0,DOOR.volume-0.05); if (DOOR.volume<=0){ clearInterval(DOOR._f); DOOR.pause(); } },60); }, SND_LEN*1000); } } catch(e){} }
+  function stopDoor(){ try { clearInterval(DOOR._f); DOOR._f=setInterval(function(){ DOOR.volume=Math.max(0,DOOR.volume-0.08); if (DOOR.volume<=0){ clearInterval(DOOR._f); DOOR.pause(); } },50); } catch(e){} }
+  function rdOpen(){ if (Date.now()<lockUntil) return true; try { var ok=!!(live && live.contentWindow.__rdOpen && live.contentWindow.__rdOpen()); if (ok) playDoor(); return ok; } catch(err){ return false; } }
   function onClick(e, w){ if (!started) return; if (e.clientX < (w||innerWidth)*0.2) show(cur-1); else { if (rdOpen()) return; if (cur<N-1) show(cur+1); } }
   addEventListener('keydown', onKey);
   addEventListener('click', function(e){ if (e.target.closest && (e.target.closest('#go')||e.target.closest('#again'))) return; onClick(e); });
