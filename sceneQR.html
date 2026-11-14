@@ -116,7 +116,7 @@ html.embed .brand, html.embed .tag { display: none !important; }
       <li><b>4</b><div><strong>취소 · 재결제</strong><span>2분 안에 다시 결제하고 할인 받기</span></div></li>
     </ol>
     <p class="try">📱 지금 QR을 찍고 홈에서 <b>‘재결제 체험’</b>을 눌러 보세요</p>
-    <div class="timer"><i></i><b id="timer">0:30</b><span>체험 시간</span></div>
+    <div class="timer"><i></i><b id="timer">1:00</b><span>체험 시간</span></div>
   </div>
 </div>
 <script>
@@ -441,7 +441,7 @@ var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
     var dr=function(im,a){ if (!im || a<=0) return; g.globalAlpha=a; g.imageSmoothingQuality='high'; g.filter='brightness(1.14) contrast(1.06) saturate(1.05)'; g.drawImage(im,0,0,w,h); g.filter='none'; };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg?v=20261114e','images/wall_left_en.jpg?v=20261114e'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114e','images/wall_right_en.jpg?v=20261114e'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261114f','images/wall_left_en.jpg?v=20261114f'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114f','images/wall_right_en.jpg?v=20261114f'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
 RC.band=tex(3600,260,function(g,w,h){ });
@@ -588,7 +588,7 @@ var SS={s1:document.getElementById('s1'),s2:document.getElementById('s2'),s4:doc
 function ease(x){ x=clamp(x,0,1); return x*x*(3-2*x); }
 var SPS={home:document.getElementById('sp_home'),sms:document.getElementById('sp_sms'),alert:document.getElementById('sp_alert'),bar:document.getElementById('sp_bar')}, S1=document.getElementById('s1'), FL=Array.prototype.slice.call(document.querySelectorAll('#flow li'));
 var QW=document.getElementById('qrw'), TM=document.getElementById('timer'), lastSec=-1;
-function phoneUI(t){ QW.classList.toggle('on', t>4.1); var left=Math.max(0, 30-Math.floor(Math.max(0,t-4.1))); if (left!==lastSec){ lastSec=left; TM.textContent=Math.floor(left/60)+':'+('0'+left%60).slice(-2); } }
+function phoneUI(t){ QW.classList.toggle('on', t>4.1); var left=Math.max(0, 60-Math.floor(Math.max(0,t-4.1))); if (left!==lastSec){ lastSec=left; TM.textContent=Math.floor(left/60)+':'+('0'+left%60).slice(-2); } }
 var NFC_P=[0,1.2,9.1];
 function drawRipple(t){ var t0=4.05; if (t<t0 || t>t0+2.6) return; var C=toCam(NFC_P); if (C[2]<=NEAR) return; var p=proj(C), s=focal/C[2];
   ctx.save(); ctx.globalCompositeOperation='lighter'; for (var i=0;i<3;i++){ var u=((t-t0)*0.9-i*0.25); if (u<0||u>1) continue; ctx.strokeStyle='rgba(255,170,70,'+(1-u)*0.9+')'; ctx.lineWidth=Math.max(2,0.06*s*(1-u)); ctx.beginPath(); ctx.ellipse(p[0],p[1],(0.3+u*1.6)*s,(0.12+u*0.6)*s,0,0,7); ctx.stroke(); }
