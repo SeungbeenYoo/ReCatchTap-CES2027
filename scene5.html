@@ -51,7 +51,13 @@ html.embed .brand, html.embed .tag { display: none !important; }
 var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 var cv = document.getElementById('v'), ctx = cv.getContext('2d');
 var W, H, DPR;
-function resize(){ DPR = 1; W = innerWidth; H = innerHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
+// 화질 자동 조절: 프레임 간격의 중앙값이 45ms(약 22fps)보다 느리면 내부 해상도를 0.75 → 0.6 배로 낮춤 (?hq 로 끔)
+var QS={dpr:1,lvl:0,n:0,acc:[],off:/[?&]hq/.test(location.search)}, FRZ={n:0};
+function qdpr(){ return [1,0.75,0.6][QS.lvl]; }
+try { if (!QS.off){ QS.lvl=Math.min(2,Math.max(0,parseInt(sessionStorage.getItem('rcq'),10)||0)); QS.dpr=qdpr(); } } catch(e){}   // 앞 장면에서 낮춘 화질은 다음 장면에서도 그대로 시작
+function govern(ms){ if (QS.off || QS.lvl>=2 || ms>1000) return; if (++QS.n<=10) return; QS.acc.push(ms); if (QS.acc.length<24) return;
+  var a=QS.acc.sort(function(x,y){ return x-y; }), med=a[12]; QS.acc=[]; if (med>45){ QS.lvl++; QS.dpr=qdpr(); QS.n=0; resize(); try { sessionStorage.setItem('rcq',QS.lvl); } catch(e){} } }
+function resize(){ FRZ.n=0; DPR = QS.dpr; W = innerWidth; H = innerHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
 addEventListener('resize', resize); resize();
 var FONT = "'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
 var LOGO=new Image(), started=false; function ready(){ if (!started){ started=true; start(); } } LOGO.onload=ready; LOGO.onerror=ready;
@@ -354,21 +360,38 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
 // 양옆 벽: 팀 자료 이미지 (왼쪽 = 프로덕트 소개, 오른쪽 = 시장·차별점·기술)
 // 확대 장면(신3·신4)에서는 영문판을 먼저 보여 주고 1초 뒤 한글판으로 자연스럽게 바뀜 (영문 파일이 없으면 한글만)
 var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
-(function(){ function load(src,cb){ var im=new Image(), alt=src.replace(/\.jpg$/,'.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
+(function(){ function load(src,cb){ var im=new Image(), alt=src.replace('.jpg','.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
   function setup(o,kr,en){ load(kr,function(im){ o.kr=im; WALLFX.paint(o,0); }); load(en,function(im){ o.en=im; WALLFX.paint(o,0); }); }
   WALLFX.paint=function(o,mix){ var c=o.c; if (!o.kr) return; if (c.width!==2400){ c.width=2400; c.height=1380; } var g=c.getContext('2d'), w=c.width, h=c.height;
     g.globalAlpha=1; g.fillStyle='#fffaf4'; g.fillRect(0,0,w,h);
     var dr=function(im,a){ if (!im || a<=0) return; var s=Math.min(w/im.width,h/im.height), dw=im.width*s, dh=im.height*s; g.globalAlpha=a; g.drawImage(im,(w-dw)/2,(h-dh)/2,dw,dh); };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg','images/wall_left_en.jpg'); setup(WALLFX.R,'images/wall_right.jpg','images/wall_right_en.jpg'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261111i','images/wall_left_en.jpg?v=20261111i'); setup(WALLFX.R,'images/wall_right.jpg?v=20261111i','images/wall_right_en.jpg?v=20261111i'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
-RC.band=tex(3600,260,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-10,w,10); g.textBaseline='middle'; g.textAlign='center';
-  for (var i=0;i<2;i++){ var x=w*(i+.5)/2; g.font='900 96px '+FONT; g.fillStyle='#ffffff'; g.fillText('ReCatch Tap',x-260,h/2); g.fillStyle='#f98802'; g.beginPath(); g.arc(x+70,h/2+28,12,0,7); g.fill(); g.fillStyle='#b9b9c0'; g.font='700 56px '+FONT; g.fillText('Pay Smart, Pay Less.',x+390,h/2+6); } });
-// 맨 위 띠: 전광판처럼 옆으로 흐름
-RC.band._dyn=true; var BANDSRC=document.createElement('canvas'); BANDSRC.width=RC.band.width; BANDSRC.height=RC.band.height; BANDSRC.getContext('2d').drawImage(RC.band,0,0);
-function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, off=((reduce?0:tt)*260)%w; g.drawImage(BANDSRC,-off,0); g.drawImage(BANDSRC,w-off,0); }
+RC.band=tex(3600,260,function(g,w,h){ });
+// 띠 전광판: 오늘 부스에서 아낀 금액 — 3초마다 무작위로 오르고, 장면이 바뀌어도 금액이 이어짐
+RC.band._dyn=true; var SAVE0=2847300;
+var SAVE_T0=(function(){ var k='rcSaveT0', v=0; try { v=+sessionStorage.getItem(k)||0; } catch(e){} if (!v){ try { v=+window.parent.__rcSaveT0||0; } catch(e){} } if (!v) v=Date.now();
+  try { sessionStorage.setItem(k,String(v)); } catch(e){} try { window.parent.__rcSaveT0=v; } catch(e){} return v; })();
+function saveInc(i){ var x=Math.sin(i*12.9898+78.233)*43758.5453; x-=Math.floor(x); return Math.round((1200+x*16800)/100)*100; }
+var SAVE_N=0, SAVE_V=SAVE0;
+function saveNow(){ var n=Math.max(0,Math.floor((Date.now()-SAVE_T0)/3000)); if (n<SAVE_N){ SAVE_N=0; SAVE_V=SAVE0; } while (SAVE_N<n){ SAVE_N++; SAVE_V+=saveInc(SAVE_N); } return n; }
+var BAND_LANG=(location.hash.match(/band=(ko|en|mix)/)||[])[1]||'ko'; // ko: 한글, en: 영어, mix: 번갈아
+var BAND_LB={ko:'오늘 부스에서 아낀 금액',en:'SAVED AT OUR BOOTH TODAY'};
+function bandSeg(g,x,h,amt,k,plus){ g.textBaseline='middle'; g.textAlign='left'; var y=h/2; var lang=BAND_LANG==='mix'?(k%2?'en':'ko'):BAND_LANG, lb=BAND_LB[lang];
+  g.fillStyle='#e6e6ea'; g.font=(lang==='en'?'800 58px ':'800 64px ')+FONT; g.fillText(lb,x,y+4); var wx=x+g.measureText(lb).width+40;
+  g.fillStyle='#f98802'; g.font='900 120px '+FONT; g.fillText(amt,wx,y+8); wx+=g.measureText(amt).width+70;
+  g.fillStyle='#f98802'; g.beginPath(); g.arc(wx,y+6,12,0,7); g.fill();
+  if (plus){ g.fillStyle='#5fd38a'; g.font='800 56px '+FONT; g.fillText(plus,wx+40,y+6); } }
+function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, h=RC.band.height, seg=w/2, off=((reduce?0:tt)*260)%seg;
+  g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-10,w,10);
+  var n=saveNow(), since=(Date.now()-SAVE_T0)/1000-n*3;
+  var amt='₩'+SAVE_V.toLocaleString('ko-KR'), plus=(n>0 && since<1.2)?'+₩'+saveInc(n).toLocaleString('ko-KR'):'';
+  for (var k=0;k<3;k++) bandSeg(g,k*seg-off+60,h,amt,k,plus);
+  RC.band._mip=null; RC.band._avg=null; }
+scrollBand(0);
 (function(){ var cx=0, BZ=0.4, H=6.6, HT=8.8, XB=8.6, XF=12.6, ZF=13.4;
   // 사각 플랫폼 (앞쪽 넓은 사다리꼴) + 주황 라인
   quad([[-XB,0.26,BZ],[XB,0.26,BZ],[XF,0.26,ZF],[-XF,0.26,ZF]],[0,1,0],{col:'#1a1a1d'});
@@ -659,11 +682,13 @@ function buildList(t){
     var cp = MIRROR ? [cam.pos[0], -cam.pos[1], cam.pos[2]] : cam.pos;
     if (dot(f.n, sub(cp, ctr)) <= 0) return;
     var cs=f.p.map(toCam), z=toCam(ctr)[2]+f.bias; if (z<-3) return;
+    var nb=0, oL=1, oR=1, oT=1, oB=1; for (var ci=0;ci<cs.length;ci++){ var cc=cs[ci]; if (cc[2]<=NEAR){ nb++; continue; } var sk=focal/cc[2], sx=W/2+cc[0]*sk, sy=H/2-cc[1]*sk; if (sx>-6) oL=0; if (sx<W+6) oR=0; if (sy>-6) oT=0; if (sy<H+6) oB=0; }
+    if (nb===cs.length || (nb===0 && (oL||oR||oT||oB))) return;   // 전부 카메라 뒤이거나 화면 밖
     list.push({k:'f',f:f,cs:cs,z:z});
   });
   wires.forEach(function(w){ if (MIRROR) return; var a=toCam(w[0]), b=toCam(w[1]); list.push({k:'w',a:a,b:b,z:Math.max(a[2],b[2])}); });
   lines.forEach(function(l){ var a=toCam(l.a), b=toCam(l.b); list.push({k:'l',l:l,z:(a[2]+b[2])/2-0.2}); });
-  npcs.forEach(function(p){ var c=toCam([p.x,0,p.z]); if (c[2]>NEAR) list.push({k:'p',p:p,c:c,z:c[2]}); });
+  npcs.forEach(function(p){ var c=toCam([p.x,0,p.z]); if (c[2]>NEAR && (Math.abs(c[0])-1.3)*focal/c[2] < W/2) list.push({k:'p',p:p,c:c,z:c[2]}); });
 
   var sc2=toCam([STAFF.x,0,STAFF.z]); if (sc2[2]>NEAR && !MIRROR) list.push({k:'s',c:sc2,z:sc2[2]});
   if (!MIRROR) CONES.forEach(function(c){ var A=toCam(c.a), B=toCam(c.b); list.push({k:'c',c:c,A:A,B:B,z:Math.min(A[2],B[2])-0.5}); });
@@ -738,6 +763,13 @@ function frame(t){
 var prev=performance.now();
 window.__start=function(){ me.t0=performance.now(); prev=performance.now(); window.__paused=false; };
 window.__ready=true;
+// 발표 틀(index.html)이 이 창에 직접 접근하지 못하는 환경(폴더에서 바로 열기 등)에서는 메시지로 시작·정지·키를 주고받음
+(function(){ if (window.parent===window) return; var same=false; try { same=!!window.parent.document; } catch(e){}
+  addEventListener('message',function(e){ var d=e.data; if (!d || d.rc!==1) return; if (d.cmd==='start') window.__start(); else if (d.cmd==='pause') window.__paused=true; else if (d.cmd==='hello') window.__deck=true; });
+  try { window.parent.postMessage({rc:1,ev:'ready'},'*'); } catch(e){}
+  if (same) return;
+  addEventListener('keydown',function(e){ if (!window.__deck) return; window.parent.postMessage({rc:1,ev:'keydown',key:e.key},'*'); if (/^(Arrow|Page)|^( |Enter|Backspace)$/.test(e.key)) e.preventDefault(); });
+  addEventListener('click',function(e){ if (window.__deck) window.parent.postMessage({rc:1,ev:'click',x:e.clientX,w:innerWidth},'*'); }); })();
 function update(dt){
   if (me.t0===null) me.t0=performance.now();
   var raw=Math.min(TOTAL,(performance.now()-me.t0)/1000); me.since=raw;
@@ -770,7 +802,7 @@ function drawBubble(tt){
   ctx.fillStyle='#6e6e73'; ctx.font='700 '+(bh*0.062)+'px '+FONT; ctx.fillText('Which card, membership or coupon saves the most?', bx, by+bh*0.4);
   ctx.restore();
 }
-function loop(t){ if (window.__paused){ prev=t; requestAnimationFrame(loop); return; } var dt=Math.min(0.2,(t-prev)/1000); prev=t; if (!reduce) update(dt); frame(t); requestAnimationFrame(loop); }
+function loop(t){ if (window.__paused){ prev=t; requestAnimationFrame(loop); return; } var raw=t-prev, dt=Math.min(0.2,raw/1000); prev=t; if (!reduce) update(dt); govern(raw); frame(t); requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
 }
 })();

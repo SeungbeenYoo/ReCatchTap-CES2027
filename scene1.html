@@ -22,6 +22,24 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
 .cap p { margin-top: 8px; font-size: clamp(14px, 1.45vw, 19px); color: #c9cfdd; text-shadow: 0 2px 14px rgba(0,0,0,.8); }
 .vig { position: fixed; inset: 0; pointer-events: none; z-index: 2; background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%), linear-gradient(to top right, rgba(0,0,0,.7), rgba(0,0,0,0) 40%); }
 html.embed .brand, html.embed .tag { display: none !important; }
+
+/* 오프닝: 가운데로 갈라진 R 로고 문이 열림 */
+.rdoor{position:fixed;top:0;bottom:0;width:50%;z-index:50;overflow:hidden;background:#18171c;pointer-events:none;will-change:transform;transform:translateZ(0);contain:strict}
+.rdoor.l{left:0} .rdoor.r{right:0}
+.rdoor svg{position:absolute;top:8vh;height:84vh;width:auto}
+.rdoor.l svg{right:-38vh} .rdoor.r svg{left:-38vh}
+.rdoor:after{content:"";position:absolute;top:0;bottom:0;width:.5vw;background:#f98802;box-shadow:0 0 3vh #f98802}
+.rdoor.l:after{right:0} .rdoor.r:after{left:0}
+.rdoor.go.l{animation:rdl 1.1s cubic-bezier(.6,0,.3,1) forwards} .rdoor.go.r{animation:rdr 1.1s cubic-bezier(.6,0,.3,1) forwards}
+@keyframes rdl{to{transform:translateX(-100%)}} @keyframes rdr{to{transform:translateX(100%)}}
+.cap{opacity:0} .cap.go{animation:rdcap .6s .9s ease-out forwards}
+@keyframes rdcap{from{opacity:0;transform:translateY(2vh)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.rdoor{display:none} .cap{opacity:1}}
+.rdoor.wait:after{animation:seam 1.6s ease-in-out infinite}
+@keyframes seam{50%{box-shadow:0 0 6vh 1vh #f98802;opacity:.75}}
+.rdhint{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%);z-index:51;white-space:nowrap;font:800 1.9vh 'Noto Sans KR',sans-serif;letter-spacing:.3em;color:#fff;background:rgba(20,20,24,.85);border:1px solid rgba(249,136,2,.7);border-radius:99px;padding:1.2vh 3vh;pointer-events:none;opacity:0;transition:opacity .3s}
+.rdoor.wait ~ .rdhint{opacity:1;animation:hintb 1.6s ease-in-out infinite}
+@keyframes hintb{50%{opacity:.45}}
 </style>
 </head>
 <body><script>if (window.parent!==window){ document.documentElement.classList.add("embed"); window.__paused=true; }</script>
@@ -29,6 +47,7 @@ html.embed .brand, html.embed .tag { display: none !important; }
 <div class="vig"></div>
 <div class="brand"><img src="data:image/png;base64,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" alt="ReCatch 로고" width="38" height="38" style="border-radius:10px;display:block"><div><b>ReCatch Tap</b><span>FINAL PITCH · CES 2027</span></div></div>
 <div class="tag">SCENE <b>01</b> · ENTRANCE · 입장</div>
+<div class="rdoor l" id="rdl"><svg viewBox="0 0 820 900" aria-hidden="true"><path d="M170 -20 H420 A250 250 0 0 1 420 480 H170 V320 H410 A90 90 0 0 0 410 140 H170Z" fill="#e6e6ea"/><rect x="40" y="-20" width="190" height="940" fill="#fff"/><path d="M250 330 L450 330 L790 920 L590 920Z" fill="#f4f4f6"/></svg></div><div class="rdoor r" id="rdr"><svg viewBox="0 0 820 900" aria-hidden="true"><path d="M170 -20 H420 A250 250 0 0 1 420 480 H170 V320 H410 A90 90 0 0 0 410 140 H170Z" fill="#e6e6ea"/><rect x="40" y="-20" width="190" height="940" fill="#fff"/><path d="M250 330 L450 330 L790 920 L590 920Z" fill="#f4f4f6"/></svg></div><div class="rdhint">PRESS ▶ TO ENTER · CES 2027</div>
 <div class="cap">
   <p class="en">Welcome to CES 2027 · Las Vegas</p>
   <h1>세계 최대 기술 박람회,<br><em>그 입구에 서 있습니다</em></h1>
@@ -40,7 +59,13 @@ html.embed .brand, html.embed .tag { display: none !important; }
 var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 var cv = document.getElementById('v'), ctx = cv.getContext('2d');
 var W, H, DPR;
-function resize(){ DPR = 1; W = innerWidth; H = innerHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
+// 화질 자동 조절: 프레임 간격의 중앙값이 45ms(약 22fps)보다 느리면 내부 해상도를 0.75 → 0.6 배로 낮춤 (?hq 로 끔)
+var QS={dpr:1,lvl:0,n:0,acc:[],off:/[?&]hq/.test(location.search)}, FRZ={n:0};
+function qdpr(){ return [1,0.75,0.6][QS.lvl]; }
+try { if (!QS.off){ QS.lvl=Math.min(2,Math.max(0,parseInt(sessionStorage.getItem('rcq'),10)||0)); QS.dpr=qdpr(); } } catch(e){}   // 앞 장면에서 낮춘 화질은 다음 장면에서도 그대로 시작
+function govern(ms){ if (QS.off || QS.lvl>=2 || ms>1000) return; if (++QS.n<=10) return; QS.acc.push(ms); if (QS.acc.length<24) return;
+  var a=QS.acc.sort(function(x,y){ return x-y; }), med=a[12]; QS.acc=[]; if (med>45){ QS.lvl++; QS.dpr=qdpr(); QS.n=0; resize(); try { sessionStorage.setItem('rcq',QS.lvl); } catch(e){} } }
+function resize(){ FRZ.n=0; DPR = QS.dpr; W = innerWidth; H = innerHeight; cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
 addEventListener('resize', resize); resize();
 var FONT = "'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
 var LOGO=new Image(), started=false; function ready(){ if (!started){ started=true; start(); } } LOGO.onload=ready; LOGO.onerror=ready;
@@ -343,21 +368,38 @@ RC.wingR=tex(1500,1000,function(g,w,h){ g.fillStyle='#161618'; g.fillRect(0,0,w,
 // 양옆 벽: 팀 자료 이미지 (왼쪽 = 프로덕트 소개, 오른쪽 = 시장·차별점·기술)
 // 확대 장면(신3·신4)에서는 영문판을 먼저 보여 주고 1초 뒤 한글판으로 자연스럽게 바뀜 (영문 파일이 없으면 한글만)
 var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
-(function(){ function load(src,cb){ var im=new Image(), alt=src.replace(/\.jpg$/,'.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
+(function(){ function load(src,cb){ var im=new Image(), alt=src.replace('.jpg','.png'); im.onload=function(){ cb(im); }; im.onerror=function(){ if (alt!==src && im.src.indexOf(alt)<0){ im.src=alt; } }; im.src=src; }
   function setup(o,kr,en){ load(kr,function(im){ o.kr=im; WALLFX.paint(o,0); }); load(en,function(im){ o.en=im; WALLFX.paint(o,0); }); }
   WALLFX.paint=function(o,mix){ var c=o.c; if (!o.kr) return; if (c.width!==2400){ c.width=2400; c.height=1380; } var g=c.getContext('2d'), w=c.width, h=c.height;
     g.globalAlpha=1; g.fillStyle='#fffaf4'; g.fillRect(0,0,w,h);
     var dr=function(im,a){ if (!im || a<=0) return; var s=Math.min(w/im.width,h/im.height), dw=im.width*s, dh=im.height*s; g.globalAlpha=a; g.drawImage(im,(w-dw)/2,(h-dh)/2,dw,dh); };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg','images/wall_left_en.jpg'); setup(WALLFX.R,'images/wall_right.jpg','images/wall_right_en.jpg'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261111i','images/wall_left_en.jpg?v=20261111i'); setup(WALLFX.R,'images/wall_right.jpg?v=20261111i','images/wall_right_en.jpg?v=20261111i'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
-RC.band=tex(3600,260,function(g,w,h){ g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-10,w,10); g.textBaseline='middle'; g.textAlign='center';
-  for (var i=0;i<2;i++){ var x=w*(i+.5)/2; g.font='900 96px '+FONT; g.fillStyle='#ffffff'; g.fillText('ReCatch Tap',x-260,h/2); g.fillStyle='#f98802'; g.beginPath(); g.arc(x+70,h/2+28,12,0,7); g.fill(); g.fillStyle='#b9b9c0'; g.font='700 56px '+FONT; g.fillText('Pay Smart, Pay Less.',x+390,h/2+6); } });
-// 맨 위 띠: 전광판처럼 옆으로 흐름
-RC.band._dyn=true; var BANDSRC=document.createElement('canvas'); BANDSRC.width=RC.band.width; BANDSRC.height=RC.band.height; BANDSRC.getContext('2d').drawImage(RC.band,0,0);
-function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, off=((reduce?0:tt)*260)%w; g.drawImage(BANDSRC,-off,0); g.drawImage(BANDSRC,w-off,0); }
+RC.band=tex(3600,260,function(g,w,h){ });
+// 띠 전광판: 오늘 부스에서 아낀 금액 — 3초마다 무작위로 오르고, 장면이 바뀌어도 금액이 이어짐
+RC.band._dyn=true; var SAVE0=2847300;
+var SAVE_T0=(function(){ var k='rcSaveT0', v=0; try { v=+sessionStorage.getItem(k)||0; } catch(e){} if (!v){ try { v=+window.parent.__rcSaveT0||0; } catch(e){} } if (!v) v=Date.now();
+  try { sessionStorage.setItem(k,String(v)); } catch(e){} try { window.parent.__rcSaveT0=v; } catch(e){} return v; })();
+function saveInc(i){ var x=Math.sin(i*12.9898+78.233)*43758.5453; x-=Math.floor(x); return Math.round((1200+x*16800)/100)*100; }
+var SAVE_N=0, SAVE_V=SAVE0;
+function saveNow(){ var n=Math.max(0,Math.floor((Date.now()-SAVE_T0)/3000)); if (n<SAVE_N){ SAVE_N=0; SAVE_V=SAVE0; } while (SAVE_N<n){ SAVE_N++; SAVE_V+=saveInc(SAVE_N); } return n; }
+var BAND_LANG=(location.hash.match(/band=(ko|en|mix)/)||[])[1]||'ko'; // ko: 한글, en: 영어, mix: 번갈아
+var BAND_LB={ko:'오늘 부스에서 아낀 금액',en:'SAVED AT OUR BOOTH TODAY'};
+function bandSeg(g,x,h,amt,k,plus){ g.textBaseline='middle'; g.textAlign='left'; var y=h/2; var lang=BAND_LANG==='mix'?(k%2?'en':'ko'):BAND_LANG, lb=BAND_LB[lang];
+  g.fillStyle='#e6e6ea'; g.font=(lang==='en'?'800 58px ':'800 64px ')+FONT; g.fillText(lb,x,y+4); var wx=x+g.measureText(lb).width+40;
+  g.fillStyle='#f98802'; g.font='900 120px '+FONT; g.fillText(amt,wx,y+8); wx+=g.measureText(amt).width+70;
+  g.fillStyle='#f98802'; g.beginPath(); g.arc(wx,y+6,12,0,7); g.fill();
+  if (plus){ g.fillStyle='#5fd38a'; g.font='800 56px '+FONT; g.fillText(plus,wx+40,y+6); } }
+function scrollBand(tt){ var g=RC.band.getContext('2d'), w=RC.band.width, h=RC.band.height, seg=w/2, off=((reduce?0:tt)*260)%seg;
+  g.fillStyle='#141416'; g.fillRect(0,0,w,h); g.fillStyle='#f98802'; g.fillRect(0,h-10,w,10);
+  var n=saveNow(), since=(Date.now()-SAVE_T0)/1000-n*3;
+  var amt='₩'+SAVE_V.toLocaleString('ko-KR'), plus=(n>0 && since<1.2)?'+₩'+saveInc(n).toLocaleString('ko-KR'):'';
+  for (var k=0;k<3;k++) bandSeg(g,k*seg-off+60,h,amt,k,plus);
+  RC.band._mip=null; RC.band._avg=null; }
+scrollBand(0);
 (function(){ var cx=0, BZ=0.4, H=6.6, HT=8.8, XB=8.6, XF=12.6, ZF=13.4;
   // 사각 플랫폼 (앞쪽 넓은 사다리꼴) + 주황 라인
   quad([[-XB,0.26,BZ],[XB,0.26,BZ],[XF,0.26,ZF],[-XF,0.26,ZF]],[0,1,0],{col:'#1a1a1d'});
@@ -575,11 +617,13 @@ function buildList(t){
     var cp = MIRROR ? [cam.pos[0], -cam.pos[1], cam.pos[2]] : cam.pos;
     if (dot(f.n, sub(cp, ctr)) <= 0) return;
     var cs=f.p.map(toCam), z=toCam(ctr)[2]+f.bias; if (z<-3) return;
+    var nb=0, oL=1, oR=1, oT=1, oB=1; for (var ci=0;ci<cs.length;ci++){ var cc=cs[ci]; if (cc[2]<=NEAR){ nb++; continue; } var sk=focal/cc[2], sx=W/2+cc[0]*sk, sy=H/2-cc[1]*sk; if (sx>-6) oL=0; if (sx<W+6) oR=0; if (sy>-6) oT=0; if (sy<H+6) oB=0; }
+    if (nb===cs.length || (nb===0 && (oL||oR||oT||oB))) return;   // 전부 카메라 뒤이거나 화면 밖
     list.push({k:'f',f:f,cs:cs,z:z});
   });
   wires.forEach(function(w){ if (MIRROR) return; var a=toCam(w[0]), b=toCam(w[1]); list.push({k:'w',a:a,b:b,z:Math.max(a[2],b[2])}); });
   lines.forEach(function(l){ var a=toCam(l.a), b=toCam(l.b); list.push({k:'l',l:l,z:(a[2]+b[2])/2-0.2}); });
-  npcs.forEach(function(p){ var c=toCam([p.x,0,p.z]); if (c[2]>NEAR) list.push({k:'p',p:p,c:c,z:c[2]}); });
+  npcs.forEach(function(p){ var c=toCam([p.x,0,p.z]); if (c[2]>NEAR && (Math.abs(c[0])-1.3)*focal/c[2] < W/2) list.push({k:'p',p:p,c:c,z:c[2]}); });
   var mc=toCam([me.x,0,me.z]); if (mc[2]>NEAR) list.push({k:'m',c:mc,z:mc[2]});
   var sc2=toCam([STAFF.x,0,STAFF.z]); if (sc2[2]>NEAR && !MIRROR) list.push({k:'s',c:sc2,z:sc2[2]});
   if (!MIRROR) CONES.forEach(function(c){ var A=toCam(c.a), B=toCam(c.b); list.push({k:'c',c:c,A:A,B:B,z:Math.min(A[2],B[2])-0.5}); });
@@ -648,12 +692,22 @@ function frame(t){
 
 }
 var prev=performance.now();
-window.__start=function(){ prev=performance.now(); window.__paused=false; };
+// 대기 모드: 시작하면 R 문이 닫힌 채로 기다리고, 다음(→·스페이스·클릭)을 누르면 열림
+window.__rdOpen=function(){ if (!window.__rdWait) return false; window.__rdWait=false; ['rdl','rdr'].forEach(function(id){ var e=document.getElementById(id); e.classList.remove('wait'); e.classList.add('go'); }); var c=document.querySelector('.cap'); if (c){ c.classList.remove('go'); void c.offsetWidth; c.classList.add('go'); } return true; };
+window.__start=function(){ prev=performance.now(); window.__paused=false; window.__rdWait=true; ['rdl','rdr'].forEach(function(id){ var e=document.getElementById(id); e.classList.remove('go'); e.classList.add('wait'); }); var c=document.querySelector('.cap'); if (c) c.classList.remove('go'); };
+if (window.parent===window){ window.__start(); addEventListener('keydown',function(e){ if (e.key===' '||e.key==='ArrowRight'||e.key==='Enter') window.__rdOpen(); }); addEventListener('click',function(){ window.__rdOpen(); }); }
 window.__ready=true;
+// 발표 틀(index.html)이 이 창에 직접 접근하지 못하는 환경(폴더에서 바로 열기 등)에서는 메시지로 시작·정지·키를 주고받음
+(function(){ if (window.parent===window) return; var same=false; try { same=!!window.parent.document; } catch(e){}
+  addEventListener('message',function(e){ var d=e.data; if (!d || d.rc!==1) return; if (d.cmd==='start') window.__start(); else if (d.cmd==='pause') window.__paused=true; else if (d.cmd==='hello') window.__deck=true; });
+  try { window.parent.postMessage({rc:1,ev:'ready'},'*'); } catch(e){}
+  if (same) return;
+  addEventListener('keydown',function(e){ if (!window.__deck) return; window.parent.postMessage({rc:1,ev:'keydown',key:e.key},'*'); if (/^(Arrow|Page)|^( |Enter|Backspace)$/.test(e.key)) e.preventDefault(); });
+  addEventListener('click',function(e){ if (window.__deck) window.parent.postMessage({rc:1,ev:'click',x:e.clientX,w:innerWidth},'*'); }); })();
 function update(dt){
   updatePeople(dt); updateStaff(dt);
 }
-function loop(t){ if (window.__paused){ prev=t; requestAnimationFrame(loop); return; } var dt=Math.min(0.05,(t-prev)/1000); prev=t; if (!reduce) update(dt); frame(t); requestAnimationFrame(loop); }
+function loop(t){ if (window.__paused){ prev=t; requestAnimationFrame(loop); return; } var raw=t-prev, dt=Math.min(0.05,raw/1000); prev=t; if (!reduce) update(dt); govern(raw); frame(t); requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
 }
 })();
