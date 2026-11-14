@@ -116,7 +116,7 @@ html.embed .brand, html.embed .tag { display: none !important; }
       <li><b>4</b><div><strong>취소 · 재결제</strong><span>2분 안에 다시 결제하고 할인 받기</span></div></li>
     </ol>
     <p class="try">📱 지금 QR을 찍고 홈에서 <b>‘재결제 체험’</b>을 눌러 보세요</p>
-    <div class="timer"><i></i><b id="timer">0:30</b><span>체험 시간</span></div>
+    <div class="timer"><i></i><b id="timer">1:00</b><span>체험 시간</span></div>
   </div>
 </div>
 <script>
@@ -441,7 +441,7 @@ var WALLFX={ side:'', L:{c:RC.wingL}, R:{c:RC.wingR} };
     var dr=function(im,a){ if (!im || a<=0) return; g.globalAlpha=a; g.imageSmoothingQuality='high'; g.filter='brightness(1.14) contrast(1.06) saturate(1.05)'; g.drawImage(im,0,0,w,h); g.filter='none'; };
     var showEn = (WALLFX.side && o===WALLFX[WALLFX.side] && o.en) ? (1-mix) : 0;
     if (showEn<1) dr(o.kr,1); dr(o.en,showEn); g.globalAlpha=1; c._mip=null; c._avg=null; o.last=showEn; };
-  setup(WALLFX.L,'images/wall_left.jpg?v=20261114q','images/wall_left_en.jpg?v=20261114q'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114q','images/wall_right_en.jpg?v=20261114q'); })();
+  setup(WALLFX.L,'images/wall_left.jpg?v=20261114j','images/wall_left_en.jpg?v=20261114j'); setup(WALLFX.R,'images/wall_right.jpg?v=20261114j','images/wall_right_en.jpg?v=20261114j'); })();
 WALLFX.update=function(t,t0){ if (!WALLFX.side) return; var o=WALLFX[WALLFX.side]; if (!o.en) return; var mix=clamp((t-t0)/0.9,0,1); mix=mix*mix*(3-2*mix);
   if (Math.abs((1-mix)-(o.last==null?-1:o.last))>0.004){ o.c._dyn=mix>0&&mix<1; WALLFX.paint(o,mix); } };
 RC.band=tex(3600,260,function(g,w,h){ });
@@ -554,7 +554,7 @@ function updateStaff(dt){ var s=STAFF; if (s.wait>0) s.wait-=dt; else if (Math.a
 var N_PEOPLE=0;
 var PATH=[[2.1,45.6],[0,39],[0,33],[0,17.2]];
 // 카메라 경로: [초, x, y, z, 좌우(yaw), 위아래(pitch), fov]  — 0초 = 장면 1 시점, 1.4초에 1인칭으로 전환
-var KEYS=[[0,6.90,3.4,8.97,1.055,0,50],[1.6,0,2.4,19.0,0,0.04,56],[3.0,0,1.95,12.0,0,-0.1,46],[300,0,1.95,12.0,0,-0.1,46]];
+var KEYS=[[0,6.90,3.4,8.97,1.055,0,50],[1.9,0,2.4,19.0,0,0.04,56],[2.4,0,2.4,19.0,0,0.04,56],[4.4,0,1.95,12.0,0,-0.1,46],[300,0,1.95,12.0,0,-0.1,46]];
 var TOTAL=300.0;
 var me = { x:2.1, z:45.6, y:2.35, seg:0, walking:false, ph:0, t0:null, done:0, yaw:0.05, pitch:0.1, fov:60, cx:-1.4, cz:53.2, since:0 };
 var cpos=null, ctgt=null;
@@ -599,7 +599,7 @@ var SS={s1:document.getElementById('s1'),s2:document.getElementById('s2'),s4:doc
 function ease(x){ x=clamp(x,0,1); return x*x*(3-2*x); }
 var SPS={home:document.getElementById('sp_home'),sms:document.getElementById('sp_sms'),alert:document.getElementById('sp_alert'),bar:document.getElementById('sp_bar')}, S1=document.getElementById('s1'), FL=Array.prototype.slice.call(document.querySelectorAll('#flow li'));
 var QW=document.getElementById('qrw'), TM=document.getElementById('timer'), lastSec=-1;
-function phoneUI(t){ QW.classList.toggle('on', t>2.7); var left=Math.max(0, 30-Math.floor(Math.max(0,t-2.7))); if (left!==lastSec){ lastSec=left; TM.textContent=Math.floor(left/60)+':'+('0'+left%60).slice(-2); } }
+function phoneUI(t){ QW.classList.toggle('on', t>4.1); var left=Math.max(0, 60-Math.floor(Math.max(0,t-4.1))); if (left!==lastSec){ lastSec=left; TM.textContent=Math.floor(left/60)+':'+('0'+left%60).slice(-2); } }
 var NFC_P=[0,1.2,9.1];
 function drawRipple(t){ var t0=4.05; if (t<t0 || t>t0+2.6) return; var C=toCam(NFC_P); if (C[2]<=NEAR) return; var p=proj(C), s=focal/C[2];
   ctx.save(); ctx.globalCompositeOperation='lighter'; for (var i=0;i<3;i++){ var u=((t-t0)*0.9-i*0.25); if (u<0||u>1) continue; ctx.strokeStyle='rgba(255,170,70,'+(1-u)*0.9+')'; ctx.lineWidth=Math.max(2,0.06*s*(1-u)); ctx.beginPath(); ctx.ellipse(p[0],p[1],(0.3+u*1.6)*s,(0.12+u*0.6)*s,0,0,7); ctx.stroke(); }
@@ -725,10 +725,10 @@ var ME_LOOK={sc:1.04, skin:'#e8b996', hair:'#1b1512', top:'#f4f4f6', bot:'#1f2a4
 var BUY={hs:2.4, d:5.2, turn:3.4, walk:4.1, wdur:3.0, send:3.9, pos:[[-2.1,12.0,-6.6,17.0],[-0.75,11.4,-4.4,17.6],[0.75,11.6,4.4,17.6],[2.1,12.1,6.6,17.0]]};
 // ── 정장 입은 바이어들: 피칭을 듣고 → 뒤돌아 웃으며 떠남, 직원이 이메일을 보냄
 function bEase(x){ x=clamp(x,0,1); return x*x*(3-2*x); }
-function warpT(r){ return r;  return r<BUY.hs ? r : (r<BUY.hs+BUY.d ? BUY.hs : r-BUY.d); }
+function warpT(r){ return r<BUY.hs ? r : (r<BUY.hs+BUY.d ? BUY.hs : r-BUY.d); }
 BUY.list=BUY.pos.map(function(q,i){ return { x:q[0], z:q[1], x0:q[0], z0:q[1], ex:q[2], ez:q[3], sc:[1.02,0.98,1.05,1.0][i%4], ph:i*1.7, sway:i, spd:0, face:Math.PI, front:false, suit:true, fan:false, alpha:1, hide:false,
   oc:{ top:['#1f2433','#2a2d35','#23293a','#30323a'][i%4], knit:false, bot:['#1f2433','#2a2d35','#23293a','#30323a'][i%4], skin:['#f0c8a8','#e2b08c','#d8a47f','#ecc19c'][i%4], hair:['#e9e9ec','#d9d9dc','#f2f2f4','#cfcfd3'][i%4] } }; });
-function updateBuyers(r){ BUY.list.forEach(function(b){ b.hide=true; }); return;  BUY.list.forEach(function(b,i){
+function updateBuyers(r){ BUY.list.forEach(function(b,i){
   if (r<BUY.turn+i*0.12){ b.front=false; b.spd=0; b.x=b.x0; b.z=b.z0; b.alpha=1; b.hide=false; return; }
   b.front=true; var u=(r-BUY.walk-i*0.15)/BUY.wdur;
   if (u<=0){ b.spd=0; b.x=b.x0; b.z=b.z0; return; }
@@ -756,7 +756,7 @@ function envelope(x,y,r,a,rot){ ctx.save(); ctx.globalAlpha=a; ctx.translate(x,y
   ctx.strokeStyle='#F98802'; ctx.lineWidth=Math.max(1.2,r*0.14); ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(-w/2+r*0.12,-h/2+r*0.14); ctx.lineTo(0,r*0.12); ctx.lineTo(w/2-r*0.12,-h/2+r*0.14); ctx.stroke();
   ctx.fillStyle='#F98802'; ctx.beginPath(); ctx.arc(w/2-r*0.05,-h/2+r*0.05,r*0.32,0,7); ctx.fill(); ctx.restore(); }
 function headPos(x,z,sc){ var c=toCam([x,1.95*(sc||1),z]); if (c[2]<=NEAR) return null; var p=proj(c); return [p[0],p[1],focal/c[2]]; }
-function drawBuyFx(){ return;  var r=me.real||0; if (r<BUY.turn-0.1 || r>BUY.hs+BUY.d+1.5) return;
+function drawBuyFx(){ var r=me.real||0; if (r<BUY.turn-0.1 || r>BUY.hs+BUY.d+1.5) return;
   ctx.save();
   // 웃는 이모티콘: 뒤돌 때 머리 위·옆에서 통통 튀어오름
   BUY.list.forEach(function(b,i){ if (b.hide) return; var hp=headPos(b.x,b.z,b.sc); if (!hp) return; var s=hp[2];
@@ -876,7 +876,7 @@ window.__ready=true;
 function update(dt){
   if (me.t0===null) me.t0=performance.now();
   var real=(performance.now()-me.t0)/1000; me.real=real; updateBuyers(real); var raw=Math.min(TOTAL,warpT(real)); me.since=raw;
-  var k=KEYS, i=0, tt2=raw; if (raw<3.0){ var j=0; while (raw>k[j+1][0]) j++; var _e=clamp((raw-k[j][0])/(k[j+1][0]-k[j][0]),0,1); tt2=k[j][0]+(k[j+1][0]-k[j][0])*_e*_e*_e*(_e*(_e*6-15)+10); } if (reduce) tt2=TOTAL;
+  var k=KEYS, i=0, tt2=raw; if (raw<4.4){ var j=0; while (raw>k[j+1][0]) j++; var _e=clamp((raw-k[j][0])/(k[j+1][0]-k[j][0]),0,1); tt2=k[j][0]+(k[j+1][0]-k[j][0])*_e*_e*_e*(_e*(_e*6-15)+10); } if (reduce) tt2=TOTAL;
   while (i<k.length-2 && tt2>k[i+1][0]) i++;
   var u=clamp((tt2-k[i][0])/(k[i+1][0]-k[i][0]),0,1), P0=k[Math.max(0,i-1)], P1=k[i], P2=k[i+1], P3=k[Math.min(k.length-1,i+2)];
   var cr=function(j){ return P1[j]+(P2[j]-P1[j])*u; };
