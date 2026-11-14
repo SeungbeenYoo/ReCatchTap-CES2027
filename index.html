@@ -192,9 +192,9 @@ iframe.pre { z-index: 1; visibility: hidden; }
     if (SND_LEN>0){ clearInterval(DOOR._f); setTimeout(function(){ DOOR._f=setInterval(function(){ DOOR.volume=Math.max(0,DOOR.volume-0.05); if (DOOR.volume<=0){ clearInterval(DOOR._f); DOOR.pause(); } },60); }, SND_LEN*1000); } } catch(e){} }
   function stopDoor(){ try { clearInterval(DOOR._f); DOOR._f=setInterval(function(){ DOOR.volume=Math.max(0,DOOR.volume-0.08); if (DOOR.volume<=0){ clearInterval(DOOR._f); DOOR.pause(); } },50); } catch(e){} }
 
-  // 발표 타이머 3분 (시작화면부터 표시 · 발표 시작 버튼을 누르면 시작 · 처음 화면으로 가면 초기화)
-  var PT={total:180,t0:0,run:false,iv:null};
-  function ptDraw(){ var el=document.getElementById('ptimer'), v=document.getElementById('ptv'); var left=PT.run?PT.total-Math.floor((Date.now()-PT.t0)/1000):PT.total;
+  // 발표 타이머: 화면은 3:00, 실제로는 3분 30초 동안 천천히 줄어듦 (시작화면부터 표시 · 발표 시작 버튼을 누르면 시작 · 처음 화면으로 가면 초기화)
+  var PT={total:180,real:210,t0:0,run:false,iv:null};
+  function ptDraw(){ var el=document.getElementById('ptimer'), v=document.getElementById('ptv'); var left=PT.run?PT.total-Math.floor((Date.now()-PT.t0)/1000*PT.total/PT.real):PT.total;
     var over=left<0, a=Math.abs(left); v.textContent=(over?'+':'')+Math.floor(a/60)+':'+('0'+a%60).slice(-2);
     el.classList.toggle('warn',!over&&left<=30); el.classList.toggle('over',over); el.querySelector('span').textContent=over?'시간 초과':'남은 발표 시간'; }
   function ptStart(){ if (PT.run) return; PT.run=true; PT.t0=Date.now(); clearInterval(PT.iv); PT.iv=setInterval(ptDraw,250); ptDraw(); }
